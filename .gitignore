@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Datasets and large data files
+data/
+*.npy
+*.npz
+*.h5
+*.hdf5
+
+# Model checkpoints and weights
+output/checkpoints*/
+*.pt
+*.pth
+*.tar.gz
+*.zip
+
+# Output results (tracked selectively via git add -f if needed)
+output/
+
+# References / papers (PDFs are large binary files)
+REF/*.pdf
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+wandb/
+runs/
