@@ -1,0 +1,17 @@
+\section{Introducción}
+\label{sec:intro}
+
+En la ingeniería mecatrónica moderna, la percepción visual autónoma es un componente crítico para sistemas de robótica móvil, inspección automatizada en manufactura y clasificación de productos. Tradicionalmente, los modelos de visión por computador han dependido del aprendizaje supervisado, el cual exige grandes volúmenes de datos anotados manualmente por expertos humanos. Este proceso de etiquetado manual introduce elevados costos temporales y económicos, limitando la adaptabilidad de los sistemas inteligentes ante nuevos entornos o dominios visuales.
+
+El Aprendizaje Auto-Supervisado (\textit{Self-Supervised Learning}, SSL) ha emergido como una alternativa fundamental, capaz de aprender representaciones visuales invariantes y discriminativas a partir de datos no etiquetados \cite{chen2021simsiam, grill2020byol}. No obstante, el entrenamiento de modelos SSL sobre conjuntos de datos a gran escala conlleva un elevado costo computacional, energético y económico, restringiendo su escalabilidad y sostenibilidad práctica \cite{mirzasoleiman2020coresets}.
+
+Recientes avances teóricos han demostrado que no todos los ejemplos de entrenamiento contribuyen equitativamente al aprendizaje de representaciones. En particular, Joshi y Mirzasoleiman \cite{joshi2023sas} probaron que los ejemplos de mayor beneficio para el aprendizaje contrastivo son aquellos cuya similitud esperada entre vistas aumentadas es máxima respecto al resto de la distribución. Sorprendentemente, estos ejemplos coinciden con los catalogados como ``fáciles'' en aprendizaje supervisado, permitiendo excluir hasta el 40\% de los datos de entrenamiento sin degradar el rendimiento en tareas posteriores (\textit{downstream}).
+
+Sin embargo, los resultados originales de Joshi y Mirzasoleiman \cite{joshi2023sas} se limitaron a conjuntos sintéticos o de baja resolución (CIFAR-100, STL-10 y TinyImageNet) y al algoritmo SimCLR. Queda sin verificar empíricamente si las propiedades de la similitud de aumentos se generalizan a dominios con alta variabilidad intra-clase y granularidad fina, así como su independencia arquitectónica frente a otros paradigmas modernos de aprendizaje auto-supervisado como SimSiam \cite{chen2021simsiam}, BYOL \cite{grill2020byol}, Contrastive Predictive Coding (CPC) \cite{oord2018cpc} y la optimización directa de alineación y uniformidad en la hiperesfera \cite{wang2020alignuniform}.
+
+Este trabajo de investigación formaliza la evaluación de SAS sobre el conjunto de datos Food-101 \cite{bossard2014food101}, persiguiendo los siguientes objetivos específicos:
+\begin{enumerate}
+    \item Implementar el algoritmo SAS en modo puramente no supervisado y generar subconjuntos de datos con reducciones del 20\% y 40\% (80\% y 60\% de datos retenidos) sobre Food-101.
+    \item Entrenar cuatro familias representativas de modelos auto-supervisados (SimSiam, BYOL, CPC y Align-Uniform) tanto en el conjunto completo como en los subconjuntos optimizados por SAS y subconjuntos aleatorios uniformes de control.
+    \item Evaluar y comparar cuantitativamente el rendimiento downstream mediante el protocolo estándar de evaluación lineal (\textit{linear probing}), analizando la retención de precisión Top-1 / Top-5 y las ganancias en eficiencia computacional.
+\end{enumerate}

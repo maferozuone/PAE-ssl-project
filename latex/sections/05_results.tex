@@ -1,0 +1,39 @@
+\section{Resultados Experimentales}
+\label{sec:results}
+
+\subsection{Matriz de Rendimiento Comparativo}
+En la Tabla~\ref{tab:results_matrix} se presenta la estructura consolidada para la comparación de los 16 experimentos. 
+
+\begin{table*}[t]
+\centering
+\caption{Resultados de evaluación lineal (Top-1 / Top-5 Accuracy) y costo computacional en Food-101. \newline \textit{Nota: Los valores numéricos se encuentran actualmente en cómputo sobre Kaggle y la estación RTX A2000.}}
+\label{tab:results_matrix}
+\begin{tabular}{llccccc}
+\toprule
+\textbf{Método SSL} & \textbf{Configuración de Datos} & \textbf{Muestras} & \textbf{Tiempo Preentrenamiento} & \textbf{Pérdida SSL Final} & \textbf{Top-1 Acc (\%)} & \textbf{Top-5 Acc (\%)} \\
+\midrule
+\textbf{SimSiam} & Completo (100\%) & 75\,750 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                 & SAS 80\% & 60\,600 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                 & SAS 60\% & 45\,450 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                 & Aleatorio 60\% & 45\,450 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+\midrule
+\textbf{BYOL}    & Completo (100\%) & 75\,750 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                 & SAS 80\% & 60\,600 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                 & SAS 60\% & 45\,450 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                 & Aleatorio 60\% & 45\,450 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+\midrule
+\textbf{CPC}     & Completo (100\%) & 75\,750 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                 & SAS 80\% & 60\,600 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                 & SAS 60\% & 45\,450 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                 & Aleatorio 60\% & 45\,450 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+\midrule
+\textbf{Align-Uniform} & Completo (100\%) & 75\,750 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                       & SAS 80\% & 60\,600 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                       & SAS 60\% & 45\,450 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+                       & Aleatorio 60\% & 45\,450 & \textit{[En ejecución]} & \textit{[En ejecución]} & \textit{[Pendiente]} & \textit{[Pendiente]} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Curvas de Aprendizaje y Pérdida}
+\textit{[Sección reservada para la inserción de las figuras generadas a partir de los historiales guardados en \texttt{output/results\_final/history\_*.npy} una vez culminen los procesos de entrenamiento]}.
