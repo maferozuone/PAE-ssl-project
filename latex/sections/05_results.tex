@@ -14,21 +14,21 @@ Con el propósito de evaluar exhaustivamente la dinámica de compresión de dato
 \toprule
 \textbf{Método SSL} & \textbf{Configuración de Datos} & \textbf{Muestras} & \textbf{Tiempo Preentrenamiento} & \textbf{Top-1 Acc (\%)} & \textbf{Top-5 Acc (\%)} & \textbf{Retención Top-1 (\%)} \\
 \midrule
-\textbf{SimSiam} & Completo (100\%) & 75\,750 & \textit{[En cómputo]} & \textit{[Pendiente]} & \textit{[Pendiente]} & 100.0\% \\
+\textbf{SimSiam} & Completo (100\%) & 75\,750 & 273.8 min (4.56 h)    & \textbf{26.18\%}      & \textbf{54.27\%}      & 100.0\% \\
                  & SAS 90\%         & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
                  & Aleatorio 90\%   & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & SAS 80\%         & 60\,600 & \textit{[En cómputo]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
+                 & SAS 80\%         & 60\,600 & 223.0 min (3.72 h)    & \textbf{26.14\%}      & \textbf{54.58\%}      & \textbf{99.8\%} (-0.04\%) \\
                  & Aleatorio 80\%   & 60\,600 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & SAS 60\%         & 45\,450 & \textit{[En cómputo]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & Aleatorio 60\%   & 45\,450 & \textit{[En cómputo]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
+                 & SAS 60\%         & 45\,450 & 165.3 min (2.76 h)    & \textbf{27.58\%}      & \textbf{55.73\%}      & \textbf{105.3\%} (+1.40\%) \\
+                 & Aleatorio 60\%   & 45\,450 & 163.7 min (2.73 h)    & \textbf{24.99\%}      & \textbf{52.68\%}      & \textbf{95.5\%} (-1.19\%) \\
 \midrule
-\textbf{BYOL}    & Completo (100\%) & 75\,750 & \textit{[En cómputo]} & \textit{[Pendiente]} & \textit{[Pendiente]} & 100.0\% \\
+\textbf{BYOL}    & Completo (100\%) & 75\,750 & 305.5 min (5.09 h)    & \textbf{55.27\%}      & \textbf{80.20\%}      & 100.0\% \\
                  & SAS 90\%         & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
                  & Aleatorio 90\%   & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & SAS 80\%         & 60\,600 & \textit{[En cómputo]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
+                 & SAS 80\%         & 60\,600 & 242.6 min (4.04 h)    & \textbf{53.59\%}      & \textbf{79.33\%}      & \textbf{97.0\%} (-1.68\%) \\
                  & Aleatorio 80\%   & 60\,600 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & SAS 60\%         & 45\,450 & \textit{[En cómputo]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & Aleatorio 60\%   & 45\,450 & \textit{[En cómputo]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
+                 & SAS 60\%         & 45\,450 & 182.2 min (3.04 h)    & \textbf{51.54\%}      & \textbf{77.97\%}      & \textbf{93.3\%} (-3.73\%) \\
+                 & Aleatorio 60\%   & 45\,450 & 183.9 min (3.07 h)    & \textbf{51.46\%}      & \textbf{77.57\%}      & \textbf{93.1\%} (-3.81\%) \\
 \midrule
 \textbf{CPC}     & Completo (100\%) & 75\,750 & 184.0 min (3.07 h)    & \textbf{28.34\%}      & \textbf{55.42\%}      & 100.0\% \\
                  & SAS 90\%         & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
@@ -49,12 +49,30 @@ Con el propósito de evaluar exhaustivamente la dinámica de compresión de dato
 \end{tabular}
 \end{table*}
 
-\subsection{Análisis Preliminar de Desempeño}
-A partir de los resultados consolidados en los métodos evaluados completamente (\textbf{CPC} y \textbf{Align-Uniform}):
+\subsection{Análisis Integral de Desempeño}
+A partir de la consolidación de los 16 experimentos base sobre las cuatro familias de métodos SSL:
 
 \begin{enumerate}
-    \item \textbf{Superioridad Representacional de Align-Uniform}: Este enfoque contrastivo demostró una capacidad significativamente mayor para organizar el espacio latente en Food-101, alcanzando un Top-1 de 56.61\% y Top-5 de 81.30\% en su configuración completa, duplicando con creces la precisión alcanzada por CPC (28.34\%).
-    \item \textbf{Preservación Eficiente al 80\%}: En Align-Uniform, reducir un 20\% del volumen de datos mediante SAS permite preservar el \textbf{95.9\%} de la precisión del clasificador lineal (54.30\% vs 56.61\%), logrando simultáneamente un ahorro computacional directo de casi una hora de entrenamiento por modelo (223.3 min frente a 281.7 min, es decir, un 20.7\% menos tiempo de GPU).
-    \item \textbf{Efecto Regularizador en CPC}: En el caso de CPC, tanto el subconjunto SAS 80\% (29.19\%) como las versiones de 60\% (28.74\% y 29.24\%) superan ligeramente la métrica obtenida con el 100\% de los datos (28.34\%). Esto evidencia que el conjunto completo introduce ruido o redundancia que no beneficia la predicción autorregresiva por parches, y que una reducción moderada estabiliza la representación.
-    \item \textbf{Comportamiento al 60\% (SAS vs. Aleatorio)}: A una tasa de retención del 60\%, la diferencia entre la selección inteligente SAS (51.18\%) y la selección aleatoria uniforme (51.63\%) es de únicamente 0.45\%, situándose dentro del margen de varianza estadística propio de los clasificadores lineales.
+    \item \textbf{Jerarquía de Paradigmas SSL en Food-101}:
+    Se observan dos regímenes claramente diferenciados:
+    \begin{itemize}
+        \item \textbf{Alta Capacidad Representacional}: \textbf{Align-Uniform} (56.61\%) y \textbf{BYOL} (55.27\%) alcanzan desempeños sobresalientes, con una ventaja superior a 27 puntos porcentuales sobre los métodos alternativos. La optimización explícita sobre la hiperesfera (Align-Uniform) y el esquema no contrastivo asimétrico con red \textit{momentum target} (BYOL) demuestran ser sumamente robustos frente a la alta varianza visual de las 101 clases de alimentos.
+        \item \textbf{Sensibilidad Estructural}: \textbf{CPC} (28.34\%) y \textbf{SimSiam} (26.18\%) muestran una capacidad discriminativa modesta bajo la evaluación lineal global, atribuible a la partición espacial en parches en CPC y a la ausencia de red \textit{momentum} o muestras negativas en SimSiam con resolución $128 \times 128$.
+    \end{itemize}
+
+    \item \textbf{Eficacia del Régimen SAS al 80\%}:
+    En todos los métodos, el subconjunto **SAS 80\%** demuestra una notable preservación del espacio latente:
+    \begin{itemize}
+        \item En \textbf{BYOL}, preserva el \textbf{97.0\%} de la precisión Top-1 (53.59\% vs. 55.27\%) ahorrando 63 minutos de GPU (un 20.6\% menos de tiempo).
+        \item En \textbf{Align-Uniform}, conserva el \textbf{95.9\%} del rendimiento Top-1 (54.30\% vs. 56.61\%) con un ahorro de 58.4 minutos de GPU (20.7\% menos de cómputo).
+        \item En \textbf{SimSiam}, la precisión es prácticamente indistinguible del modelo completo (26.14\% vs. 26.18\%, retención del \textbf{99.8\%}), superando incluso al modelo completo en Top-5 (54.58\% vs. 54.27\%).
+        \item En \textbf{CPC}, supera al modelo completo en $+0.85\%$ (29.19\% vs. 28.34\%).
+    \end{itemize}
+
+    \item \textbf{Impacto de la Poda al 60\% y la Gran Victoria de SAS en SimSiam}:
+    \begin{itemize}
+        \item En \textbf{SimSiam}, el subconjunto **SAS 60\% alcanza 27.58\% Top-1**, superando al modelo completo (26.18\%) en $+1.40\%$ y superando contundentemente al muestreo aleatorio uniforme al 60\% (24.99\%) en **$+2.59\%$ Top-1 y $+3.05\%$ Top-5**, requiriendo un 39.6\% menos de tiempo de entrenamiento.
+        \item En \textbf{BYOL}, SAS 60\% (51.54\% Top-1, 77.97\% Top-5) supera a Random 60\% (51.46\% Top-1, 77.57\% Top-5).
+        \item En \textbf{Align-Uniform}, a nivel del 60\%, SAS (51.18\%) y Random (51.63\%) se sitúan en un empate técnico (diferencia de 0.45\%), reflejando la compensación entre representatividad de centroides y cobertura distribucional descrita en la teoría de poda de datos.
+    \end{itemize}
 \end{enumerate}
