@@ -21,7 +21,15 @@ from config_final import get_config
 import train_ssl_final as train_module
 
 DEFAULT_METHODS = ["simsiam", "byol", "cpc", "align_uniform"]
-DEFAULT_CONFIGS = ["full", "sas_keep_80pct", "sas_keep_60pct", "random_keep_60pct"]
+DEFAULT_CONFIGS = [
+    "full",
+    "sas_keep_90pct",
+    "random_keep_90pct",
+    "sas_keep_80pct",
+    "random_keep_80pct",
+    "sas_keep_60pct",
+    "random_keep_60pct",
+]
 
 
 def main():

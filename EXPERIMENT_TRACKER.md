@@ -1,72 +1,74 @@
-# 📊 Matriz de Experimentos SSL - PAE (Seguimiento y Control)
+# 📊 Matriz Ampliada de Experimentos SSL - PAE (28 Experimentos)
 
-Este documento registra la asignación de experimentos entre **Kaggle** y el **PC de la Universidad (RTX A2000)** para evitar colisiones y asegurar la cobertura de todas las combinaciones de Métodos SSL y Subconjuntos SAS.
-
----
-
-## 🖥️ Asignación de Recursos
-
-| Máquina | Hardware | Métodos Asignados | Subconjuntos de Datos | Total Runs |
-| :--- | :--- | :--- | :--- | :---: |
-| **Kaggle** | GPU T4 / P100 (16 GB VRAM) | **`simsiam`**, **`byol`** | `full`, `sas_80%`, `sas_60%`, `random_60%` | **8** |
-| **PC de la U** | NVIDIA RTX A2000 (12 GB VRAM) + NVMe 1 TB | **`cpc`**, **`align_uniform`** | `full`, `sas_80%`, `sas_60%`, `random_60%` | **8** |
-| **Total Global** | | **4 Métodos** | **4 Configuraciones** | **16 Experimentos** |
+Este documento registra la asignación, cobertura y estado en tiempo real de los **28 experimentos** (4 métodos $\times$ 7 configuraciones de datos) para comparar rigurosamente el comportamiento de **SAS vs. Muestreo Aleatorio** frente al conjunto completo (100\%) a tres tasas de retención: **90\%**, **80\%** y **60\%**.
 
 ---
 
-## 📋 Tablero de Estado de Experimentos
+## 🖥️ Matriz Experimental Ampliada (7 Configuraciones)
 
-### 🔵 Tanda 1: Kaggle (`simsiam` & `byol`)
-
-| # | Método | Configuración de Datos | Estado | Checkpoint Generado | Tiempo Estimado |
-| :-: | :--- | :--- | :---: | :--- | :---: |
-| 1 | `simsiam` | `full` (100%) | [ ] Pendiente | `output/checkpoints_final/simsiam_full_final.pt` | ~1.5 h |
-| 2 | `simsiam` | `sas_keep_80pct` | [ ] Pendiente | `output/checkpoints_final/simsiam_sas_keep_80pct_final.pt` | ~1.2 h |
-| 3 | `simsiam` | `sas_keep_60pct` | [ ] Pendiente | `output/checkpoints_final/simsiam_sas_keep_60pct_final.pt` | ~0.9 h |
-| 4 | `simsiam` | `random_keep_60pct` | [ ] Pendiente | `output/checkpoints_final/simsiam_random_keep_60pct_final.pt` | ~0.9 h |
-| 5 | `byol` | `full` (100%) | [ ] Pendiente | `output/checkpoints_final/byol_full_final.pt` | ~2.0 h |
-| 6 | `byol` | `sas_keep_80pct` | [ ] Pendiente | `output/checkpoints_final/byol_sas_keep_80pct_final.pt` | ~1.6 h |
-| 7 | `byol` | `sas_keep_60pct` | [ ] Pendiente | `output/checkpoints_final/byol_sas_keep_60pct_final.pt` | ~1.2 h |
-| 8 | `byol` | `random_keep_60pct` | [ ] Pendiente | `output/checkpoints_final/byol_random_keep_60pct_final.pt` | ~1.2 h |
-
-> **Comando de ejecución en Kaggle:** Celda 4 del notebook `kaggle_train.ipynb`.
+1. **`full` (100\%)**: 75\,750 imágenes (cota superior de datos)
+2. **`sas_keep_90pct` (90\%)**: 68\,175 imágenes (poda leve inteligente del 10\%)
+3. **`random_keep_90pct` (90\%)**: 68\,175 imágenes (poda leve estocástica del 10\%)
+4. **`sas_keep_80pct` (80\%)**: 60\,600 imágenes (poda moderada inteligente del 20\%)
+5. **`random_keep_80pct` (80\%)**: 60\,600 imágenes (poda moderada estocástica del 20\%)
+6. **`sas_keep_60pct` (60\%)**: 45\,450 imágenes (poda profunda inteligente del 40\%)
+7. **`random_keep_60pct` (60\%)**: 45\,450 imágenes (poda profunda estocástica del 40\%)
 
 ---
 
-### 🟢 Tanda 2: PC de la Universidad (`cpc` & `align_uniform`)
+## 📋 Tablero de Estado de los 28 Experimentos
 
-| # | Método | Configuración de Datos | Estado | Checkpoint Generado | Tiempo Estimado |
-| :-: | :--- | :--- | :---: | :--- | :---: |
-| 9 | `cpc` | `full` (100%) | [ ] Pendiente | `output/checkpoints_final/cpc_full_final.pt` | ~1.5 h |
-| 10 | `cpc` | `sas_keep_80pct` | [ ] Pendiente | `output/checkpoints_final/cpc_sas_keep_80pct_final.pt` | ~1.2 h |
-| 11 | `cpc` | `sas_keep_60pct` | [ ] Pendiente | `output/checkpoints_final/cpc_sas_keep_60pct_final.pt` | ~0.9 h |
-| 12 | `cpc` | `random_keep_60pct` | [ ] Pendiente | `output/checkpoints_final/cpc_random_keep_60pct_final.pt` | ~0.9 h |
-| 13 | `align_uniform` | `full` (100%) | [ ] Pendiente | `output/checkpoints_final/align_uniform_full_final.pt` | ~1.3 h |
-| 14 | `align_uniform` | `sas_keep_80pct` | [ ] Pendiente | `output/checkpoints_final/align_uniform_sas_keep_80pct_final.pt` | ~1.0 h |
-| 15 | `align_uniform` | `sas_keep_60pct` | [ ] Pendiente | `output/checkpoints_final/align_uniform_sas_keep_60pct_final.pt` | ~0.8 h |
-| 16 | `align_uniform` | `random_keep_60pct` | [ ] Pendiente | `output/checkpoints_final/align_uniform_random_keep_60pct_final.pt` | ~0.8 h |
+### 🟢 Tanda 1: PC de la Universidad (`cpc` & `align_uniform`) — RTX A2000
 
-> **Comando de ejecución en el PC de la U:**
+| # | Método | Configuración | Muestras | Estado | Top-1 Acc | Top-5 Acc | Checkpoint |
+| :-: | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| 1 | `align_uniform` | `full` (100\%) | 75\,750 | ✅ **Listo** | **56.61\%** | **81.30\%** | `align_uniform_full_final.pt` |
+| 2 | `align_uniform` | `sas_keep_90pct` | 68\,175 | ⏳ **Pendiente** | -- | -- | `align_uniform_sas_keep_90pct_final.pt` |
+| 3 | `align_uniform` | `random_keep_90pct` | 68\,175 | ⏳ **Pendiente** | -- | -- | `align_uniform_random_keep_90pct_final.pt` |
+| 4 | `align_uniform` | `sas_keep_80pct` | 60\,600 | ✅ **Listo** | **54.30\%** | **79.57\%** | `align_uniform_sas_keep_80pct_final.pt` |
+| 5 | `align_uniform` | `random_keep_80pct` | 60\,600 | ⏳ **Pendiente** | -- | -- | `align_uniform_random_keep_80pct_final.pt` |
+| 6 | `align_uniform` | `sas_keep_60pct` | 45\,450 | ✅ **Listo** | **51.18\%** | **77.33\%** | `align_uniform_sas_keep_60pct_final.pt` |
+| 7 | `align_uniform` | `random_keep_60pct` | 45\,450 | ✅ **Listo** | **51.63\%** | **77.70\%** | `align_uniform_random_keep_60pct_final.pt` |
+| 8 | `cpc` | `full` (100\%) | 75\,750 | ✅ **Listo** | **28.34\%** | **55.42\%** | `cpc_full_final.pt` |
+| 9 | `cpc` | `sas_keep_90pct` | 68\,175 | ⏳ **Pendiente** | -- | -- | `cpc_sas_keep_90pct_final.pt` |
+| 10 | `cpc` | `random_keep_90pct` | 68\,175 | ⏳ **Pendiente** | -- | -- | `cpc_random_keep_90pct_final.pt` |
+| 11 | `cpc` | `sas_keep_80pct` | 60\,600 | ✅ **Listo** | **29.19\%** | **56.26\%** | `cpc_sas_keep_80pct_final.pt` |
+| 12 | `cpc` | `random_keep_80pct` | 60\,600 | ⏳ **Pendiente** | -- | -- | `cpc_random_keep_80pct_final.pt` |
+| 13 | `cpc` | `sas_keep_60pct` | 45\,450 | ✅ **Listo** | **28.74\%** | **55.42\%** | `cpc_sas_keep_60pct_final.pt` |
+| 14 | `cpc` | `random_keep_60pct` | 45\,450 | ✅ **Listo** | **29.24\%** | **56.55\%** | `cpc_random_keep_60pct_final.pt` |
+
+> **Comando en el PC de la Universidad para entrenar SOLO los 6 pendientes:**
 > ```cmd
-> python run_experiments.py --methods cpc align_uniform
+> python run_experiments.py --methods cpc align_uniform --data_configs sas_keep_90pct random_keep_90pct random_keep_80pct
 > ```
+> *(O simplemente `python run_experiments.py --methods cpc align_uniform`, ya que el script detecta y omite automáticamente los que ya están listos).*
 
 ---
 
-## ⚡ Verificador Automático de Progreso
+### 🔵 Tanda 2: Kaggle / GPU Remota (`simsiam` & `byol`)
 
-Puedes ejecutar este script en cualquier momento en tu terminal para ver qué checkpoints ya se completaron:
+| # | Método | Configuración | Muestras | Estado | Checkpoint |
+| :-: | :--- | :--- | :---: | :---: | :--- |
+| 15 | `simsiam` | `full` (100\%) | 75\,750 | ⏳ Pendiente | `simsiam_full_final.pt` |
+| 16 | `simsiam` | `sas_keep_90pct` | 68\,175 | ⏳ Pendiente | `simsiam_sas_keep_90pct_final.pt` |
+| 17 | `simsiam` | `random_keep_90pct` | 68\,175 | ⏳ Pendiente | `simsiam_random_keep_90pct_final.pt` |
+| 18 | `simsiam` | `sas_keep_80pct` | 60\,600 | ⏳ Pendiente | `simsiam_sas_keep_80pct_final.pt` |
+| 19 | `simsiam` | `random_keep_80pct` | 60\,600 | ⏳ Pendiente | `simsiam_random_keep_80pct_final.pt` |
+| 20 | `simsiam` | `sas_keep_60pct` | 45\,450 | ⏳ Pendiente | `simsiam_sas_keep_60pct_final.pt` |
+| 21 | `simsiam` | `random_keep_60pct` | 45\,450 | ⏳ Pendiente | `simsiam_random_keep_60pct_final.pt` |
+| 22 | `byol` | `full` (100\%) | 75\,750 | ⏳ Pendiente | `byol_full_final.pt` |
+| 23 | `byol` | `sas_keep_90pct` | 68\,175 | ⏳ Pendiente | `byol_sas_keep_90pct_final.pt` |
+| 24 | `byol` | `random_keep_90pct` | 68\,175 | ⏳ Pendiente | `byol_random_keep_90pct_final.pt` |
+| 25 | `byol` | `sas_keep_80pct` | 60\,600 | ⏳ Pendiente | `byol_sas_keep_80pct_final.pt` |
+| 26 | `byol` | `random_keep_80pct` | 60\,600 | ⏳ Pendiente | `byol_random_keep_80pct_final.pt` |
+| 27 | `byol` | `sas_keep_60pct` | 45\,450 | ⏳ Pendiente | `byol_sas_keep_60pct_final.pt` |
+| 28 | `byol` | `random_keep_60pct` | 45\,450 | ⏳ Pendiente | `byol_random_keep_60pct_final.pt` |
+
+---
+
+## ⚡ Monitor de Progreso Local
+
+Ejecuta en cualquier momento:
 ```cmd
 python check_progress.py
 ```
-
----
-
-## 📦 Consolidación Final y Evaluación
-
-Una vez completadas ambas tandas:
-1. Copiar los archivos `.pt` descargados de Kaggle a la carpeta `output/checkpoints_final/` del PC.
-2. Ejecutar la evaluación lineal en el PC para obtener las precisiones Top-1 y Top-5 de todos los modelos:
-   ```cmd
-   python eval_linear.py --all --mode full
-   ```
