@@ -1,0 +1,58 @@
+[
+  {
+    "method": "simsiam",
+    "data_config": "full",
+    "status": "done",
+    "elapsed_min": 273.77,
+    "checkpoint": "./output\\checkpoints_final\\simsiam_full_final.pt"
+  },
+  {
+    "method": "simsiam",
+    "data_config": "sas_keep_80pct",
+    "status": "done",
+    "elapsed_min": 223.04,
+    "checkpoint": "./output\\checkpoints_final\\simsiam_sas_keep_80pct_final.pt"
+  },
+  {
+    "method": "simsiam",
+    "data_config": "sas_keep_60pct",
+    "status": "done",
+    "elapsed_min": 165.34,
+    "checkpoint": "./output\\checkpoints_final\\simsiam_sas_keep_60pct_final.pt"
+  },
+  {
+    "method": "simsiam",
+    "data_config": "random_keep_60pct",
+    "status": "done",
+    "elapsed_min": 163.65,
+    "checkpoint": "./output\\checkpoints_final\\simsiam_random_keep_60pct_final.pt"
+  },
+  {
+    "method": "byol",
+    "data_config": "full",
+    "status": "done",
+    "elapsed_min": 305.54,
+    "checkpoint": "./output\\checkpoints_final\\byol_full_final.pt"
+  },
+  {
+    "method": "byol",
+    "data_config": "sas_keep_80pct",
+    "status": "done",
+    "elapsed_min": 242.6,
+    "checkpoint": "./output\\checkpoints_final\\byol_sas_keep_80pct_final.pt"
+  },
+  {
+    "method": "byol",
+    "data_config": "sas_keep_60pct",
+    "status": "done",
+    "elapsed_min": 182.23,
+    "checkpoint": "./output\\checkpoints_final\\byol_sas_keep_60pct_final.pt"
+  },
+  {
+    "method": "byol",
+    "data_config": "random_keep_60pct",
+    "status": "done",
+    "elapsed_min": 183.93,
+    "checkpoint": "./output\\checkpoints_final\\byol_random_keep_60pct_final.pt"
+  }
+]
