@@ -1,0 +1,29 @@
+\section{Trabajo Relacionado}
+\label{sec:related_work}
+
+\subsection{Paradigmas en Aprendizaje Auto-Supervisado (SSL)}
+Los métodos modernos de SSL para visión por computador pueden categorizarse principalmente según la estrategia empleada para prevenir el colapso de representación (donde la red proyecta todas las entradas a una constante trivial):
+
+\subsubsection{Métodos Siameses y de Detención de Gradiente}
+Chen y He \cite{chen2021simsiam} introdujeron SimSiam, demostrando que una arquitectura siamesa estándar puede aprender representaciones no colapsadas sin necesidad de pares negativos, capas de regularización complejas ni redes de memoria, recurriendo exclusivamente a un proyector asimétrico y la operación de detención de gradiente (\textit{stop-gradient}).
+
+\subsubsection{Métodos de Red Objetivo Asimétrica}
+Grill et al. \cite{grill2020byol} propusieron BYOL (\textit{Bootstrap Your Own Latent}), donde una red \textit{online} aprende a predecir la representación producida por una red \textit{target}. Los parámetros de la red objetivo $\theta_{\text{target}}$ se actualizan como un promedio móvil exponencial (EMA) de los pesos de la red en línea $\theta_{\text{online}}$:
+\begin{equation}
+\theta_{\text{target}} \leftarrow \tau \theta_{\text{target}} + (1 - \tau) \theta_{\text{online}}
+\label{eq:byol_ema}
+\end{equation}
+donde $\tau \in [0, 1]$ es el coeficiente de momento.
+
+\subsubsection{Codificación Predictiva Contrastiva (CPC)}
+Oord et al. \cite{oord2018cpc} formalizaron CPC, fundamentado en predecir el futuro en representaciones latentes secuenciales o la correlación espacial en imágenes divididas en franjas o parches, maximizando una cota inferior de la información mutua mediante la pérdida InfoNCE.
+
+\subsubsection{Alineamiento y Uniformidad en la Hiperesfera}
+Wang e Isola \cite{wang2020alignuniform} demostraron teóricamente que las funciones de pérdida contrastivas optimizan dos propiedades geométricas asintóticas en la hiperesfera $\mathcal{S}^{d-1}$:
+\begin{itemize}
+    \item \textbf{Alineamiento} (\textit{Alignment}): dos vistas aumentadas del mismo objeto deben mapearse a representaciones cercanas en la esfera.
+    \item \textbf{Uniformidad} (\textit{Uniformity}): las representaciones de muestras distintas deben preservar la máxima información distribuyéndose uniformemente sobre la esfera.
+\end{itemize}
+
+\subsection{Selección de Subconjuntos y Coreset Selection en SSL}
+La mayoría de algoritmos clásicos de selección de datos (p. ej., basados en pérdida o gradientes) dependen críticamente de etiquetas supervisadas. Para escenarios puramente no supervisados, Joshi y Mirzasoleiman \cite{joshi2023sas} demostraron que el submuestreo aleatorio descarta muestras con alta capacidad de aprendizaje y retiene redundancias. SAS aborda este problema formulando la selección de muestras como un problema de importancia muestral condicionado a clases latentes.

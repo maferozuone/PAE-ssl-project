@@ -1,0 +1,18 @@
+\section{Discusión y Conclusiones}
+\label{sec:discussion}
+
+\subsection{Discusión Técnica y Perspectiva en Ingeniería Mecatrónica}
+La reducción del volumen de datos en el entrenamiento de modelos de visión artificial tiene repercusiones directas en el ciclo de vida de desarrollo de sistemas mecatrónicos:
+\begin{itemize}
+    \item \textbf{Eficiencia Energética y de Cómputo}: La reducción en tiempo de GPU se traduce directamente en menor consumo energético en servidores de entrenamiento y prototipado rápido.
+    \item \textbf{Despliegue en Borde (\textit{Edge Computing})}: Aunque la inferencia en tiempo real depende del tamaño del \textit{backbone} (ResNet-18), la capacidad de reentrenar o adaptar modelos periódicamente en plantas industriales o robots de servicio con recursos limitados se vuelve viable cuando se requiere solo entre 60\% y 80\% de los datos.
+\end{itemize}
+
+\subsection{Limitaciones del Estudio}
+\begin{enumerate}
+    \item El análisis se acota a la arquitectura ResNet-18 y resolución de $128 \times 128$; arquitecturas basadas en Vision Transformers (ViT) o resoluciones estándar de $224 \times 224$ no fueron evaluadas debido a restricciones de cuota computacional.
+    \item El algoritmo SAS requiere una pasada previa de extracción con un modelo proxy preentrenado (ResNet-18 ImageNet), lo que introduce un costo computacional inicial amortizado a lo largo de los experimentos.
+\end{enumerate}
+
+\subsection{Conclusiones}
+\textit{[Conclusiones cuantitativas específicas pendientes de la consolidación de las métricas Top-1 / Top-5 y tiempos de GPU en la Tabla~\ref{tab:results_matrix}]}.

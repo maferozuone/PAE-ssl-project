@@ -1,0 +1,47 @@
+\documentclass[journal,10pt,twocolumn]{IEEEtran}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{microtype}
+
+\begin{document}
+
+\title{Data-Efficient Contrastive Learning: Evaluación de la Reducción de Datos mediante SAS en un Nuevo Dominio y Múltiples Paradigmas Auto-Supervisados}
+
+\author{
+    \IEEEauthorblockN{Manuel Fernando Rocha Zuleta\IEEEauthorrefmark{1}, Juan Pablo Hoyos Sánchez\IEEEauthorrefmark{2}} \\
+    \IEEEauthorblockA{\textit{Programa Curricular de Ingeniería Mecatrónica} \\
+    \textit{Facultad de Minas / Ingeniería, Universidad Nacional de Colombia} \\
+    Medellín, Colombia \\
+    \IEEEauthorrefmark{1}mfrochaz@unal.edu.co, \IEEEauthorrefmark{2}jphoyoss@unal.edu.co}
+}
+
+\maketitle
+
+\begin{abstract}
+El aprendizaje auto-supervisado (SSL) permite entrenar modelos profundos de visión artificial sin requerir anotaciones manuales, pero impone una carga computacional masiva debido a la necesidad de procesar múltiples vistas aumentadas sobre conjuntos de datos a gran escala. En aplicaciones mecatrónicas y de visión embebida, el costo de cómputo y el tiempo de convergencia son cuellos de botella críticos. Este trabajo investiga el impacto de la reducción sistemática de datos mediante el algoritmo SAS (\textit{Subsets that maximize Augmentation Similarity}) en cuatro familias de arquitecturas SSL representativas: SimSiam (no contrastivo siamés), BYOL (basado en bootstrap con red target), CPC (predictivo contrastivo espacial) y Align-Uniform (optimización directa en la hiperesfera). Empleando el conjunto de datos Food-101 (75\,750 imágenes de entrenamiento), se evalúa la retención de representaciones transferibles al reducir el volumen de datos en 20\% (80\% conservado) y 40\% (60\% conservado), en comparación con el conjunto completo y con controles de submuestreo aleatorio uniforme. La calidad de las representaciones se evalúa mediante el protocolo estándar de \textit{linear probing}. Los resultados experimentales y la metodología reproducible se analizan desde la perspectiva del diseño de sistemas de percepción eficientes para visión computacional.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Aprendizaje auto-supervisado (SSL), reducción de datos, SAS, selección de subconjuntos, visión artificial, Food-101, linear probing, eficiencia computacional.
+\end{IEEEkeywords}
+
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_methodology}
+\input{sections/04_experimental_setup}
+\input{sections/05_results}
+\input{sections/06_discussion_conclusions}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

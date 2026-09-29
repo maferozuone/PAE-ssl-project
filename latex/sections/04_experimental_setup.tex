@@ -1,0 +1,46 @@
+\section{Montaje Experimental}
+\label{sec:setup}
+
+\subsection{Conjunto de Datos y Preprocesamiento}
+Se utiliza el conjunto de datos Food-101 \cite{bossard2014food101}, compuesto por 101 clases de alimentos con un total de 101\,000 imágenes (75\,750 para entrenamiento y 25\,250 para prueba oficial). Para el preentrenamiento auto-supervisado, las imágenes se reescalan a $128 \times 128$ píxeles para optimizar el rendimiento computacional. El aumento de datos incluye:
+\begin{itemize}
+    \item Recorte aleatorio redimensionado (\textit{RandomResizedCrop}, escala $[0.2, 1.0]$).
+    \item Volteo horizontal aleatorio ($p = 0.5$).
+    \item Distorsión cromática (\textit{ColorJitter}: brillo 0.4, contraste 0.4, saturación 0.4, tono 0.1 con $p = 0.8$).
+    \item Conversión a escala de grises aleatoria ($p = 0.2$).
+    \item Desenfoque Gaussiano aleatorio ($\sigma \in [0.1, 2.0]$, $p = 0.5$).
+    \item Normalización con la media y desviación estándar de ImageNet.
+\end{itemize}
+
+\subsection{Plataformas de Cómputo Distribuidas}
+Para viabilizar el volumen experimental sin sobrepasar límites de cuota, el entrenamiento se distribuyó en dos estaciones de trabajo heterogéneas:
+\begin{enumerate}
+    \item \textbf{Estación A (Kaggle Cloud)}: GPU NVIDIA Tesla T4 / P100 (16\,GB VRAM), asignada a los modelos \textit{SimSiam} y \textit{BYOL}.
+    \item \textbf{Estación B (Laboratorio de Mecatrónica)}: Estación de trabajo local con GPU NVIDIA RTX A2000 (12\,GB VRAM, arquitectura Ampere) y almacenamiento NVMe de 1\,TB, asignada a los modelos \textit{CPC} y \textit{Align-Uniform}.
+\end{enumerate}
+
+\subsection{Hiperparámetros de Entrenamiento}
+\begin{table}[ht]
+\centering
+\caption{Parámetros de configuración para el entrenamiento SSL (\texttt{config\_final.py})}
+\label{tab:hyperparams}
+\begin{tabular}{ll}
+\toprule
+\textbf{Parámetro} & \textbf{Valor / Especificación} \\
+\midrule
+Arquitectura base & ResNet-18 (512 dimensiones latentes) \\
+Dimensión oculta proyector & 2048 \\
+Dimensión salida proyector & 256 \\
+Épocas de preentrenamiento SSL & 200 épocas \\
+Tamaño de lote (\textit{batch size}) & 128 \\
+Optimizador & Adam ($\beta_1 = 0.9, \beta_2 = 0.999$) \\
+Tasa de aprendizaje base & $3 \times 10^{-4}$ \\
+Decaimiento de peso (\textit{weight decay}) & $1 \times 10^{-6}$ \\
+Precisión mixta automática (AMP) & Habilitada (\texttt{torch.float16}) \\
+Semilla aleatoria & 42 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Protocolo de Evaluación Lineal (Linear Probing)}
+Finalizada la etapa de preentrenamiento auto-supervisado, se congela completamente la red troncal ResNet-18 ($\nabla_\theta = 0$) y se acopla una capa lineal de clasificación $\mathbb{R}^{512} \to \mathbb{R}^{101}$. Esta cabeza lineal se entrena durante 100 épocas sobre el conjunto de entrenamiento de Food-101 supervisado, evaluando la exactitud de clasificación (Top-1 y Top-5) sobre las 25\,250 muestras de prueba independientes.

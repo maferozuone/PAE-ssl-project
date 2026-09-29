@@ -1,0 +1,48 @@
+\section{Metodología y Formulación Matemática}
+\label{sec:methodology}
+
+\subsection{Arquitectura del Sistema de Visión}
+El sistema emplea una red troncal compartida (\textit{backbone}) ResNet-18 \cite{he2016resnet} sin la capa lineal final de clasificación, produciendo un vector de características latentes $h \in \mathbb{R}^{512}$. Sobre esta base se integran cabezas de proyección específicas para cada técnica.
+
+\subsection{Selección de Subconjuntos mediante SAS No Supervisado}
+Dado un conjunto no etiquetado $\mathcal{D} = \{x_i\}_{i=1}^N$ con $N = 75\,750$ imágenes de entrenamiento, el algoritmo SAS \cite{joshi2023sas} en su modo puramente auto-supervisado consta de tres etapas:
+
+\begin{enumerate}
+    \item \textbf{Extracción con Modelo Proxy}: Se emplea una red ResNet-18 preentrenada en ImageNet como extractor proxy para mapear cada imagen $x_i$ a una representación $z_i \in \mathbb{R}^{512}$, normalizada en la esfera unitaria: $z_i \leftarrow z_i / \|z_i\|_2$.
+    \item \textbf{Aproximación de Clases Latentes}: Sin acceder a las etiquetas ground-truth de Food-101, se particiona el espacio latente en $K = 101$ conglomerados mediante el algoritmo $K$-Means:
+    \begin{equation}
+    \min_{\{C_k\}_{k=1}^K} \sum_{k=1}^K \sum_{z_i \in C_k} \|z_i - \mu_k\|_2^2
+    \end{equation}
+    donde $\mu_k$ representa el centroide del grupo $k$.
+    \item \textbf{Muestreo por Importancia Intra-Cluster}: Para cada conglomerado $C_k$, se asigna una probabilidad de selección proporcional a la similitud de aumento, priorizando muestras centrales y representativas que minimizan la varianza del gradiente de la pérdida contrastiva. La cuota por cluster se asigna de forma estratificada hasta alcanzar el presupuesto global $B = \lfloor \alpha N \rfloor$, donde $\alpha \in \{0.80, 0.60\}$.
+\end{enumerate}
+
+\subsection{Formulación de los Modelos SSL Evaluados}
+
+\subsubsection{SimSiam}
+Dadas dos vistas aumentadas $x_1, x_2$, las proyecciones son $z_1 = g(f(x_1))$, $z_2 = g(f(x_2))$, y las predicciones son $p_1 = h(z_1)$, $p_2 = h(z_2)$. La función de pérdida simétrica es:
+\begin{equation}
+\mathcal{L}_{\text{SimSiam}} = \frac{1}{2} \mathcal{D}(p_1, \text{stopgrad}(z_2)) + \frac{1}{2} \mathcal{D}(p_2, \text{stopgrad}(z_1))
+\end{equation}
+donde $\mathcal{D}(p, z) = -\frac{\langle p, z \rangle}{\|p\|_2 \|z\|_2}$.
+
+\subsubsection{BYOL}
+Emplea una red \textit{online} $(f_\theta, g_\theta, q_\theta)$ y una red \textit{target} $(f_\xi, g_\xi)$. La función de pérdida normalizada por pares es:
+\begin{equation}
+\mathcal{L}_{\text{BYOL}} = 2 - 2 \frac{\langle q_\theta(z_1), z'_2 \rangle}{\|q_\theta(z_1)\|_2 \|z'_2\|_2} + 2 - 2 \frac{\langle q_\theta(z_2), z'_1 \rangle}{\|q_\theta(z_2)\|_2 \|z'_1\|_2}
+\end{equation}
+donde $z'_i = g_\xi(f_\xi(x_i))$ proviene de la red congelada respecto a gradientes directos.
+
+\subsubsection{CPC (Contrastive Predictive Coding)}
+La imagen de entrada se particiona verticalmente en $R = 4$ franjas horizontales. Cada franja se codifica en un vector $z_r$. Una red autorregresiva (GRU o MLP causal) resume el contexto superior $c_t$ y predice las representaciones futuras mediante la pérdida InfoNCE:
+\begin{equation}
+\mathcal{L}_{\text{CPC}} = -\sum_{k} \log \frac{\exp(z_{t+k}^T W_k c_t)}{\exp(z_{t+k}^T W_k c_t) + \sum_{j} \exp(z_j^T W_k c_t)}
+\end{equation}
+
+\subsubsection{Align-Uniform}
+Optimiza directamente las métricas en $\mathcal{S}^{d-1}$:
+\begin{align}
+\mathcal{L}_{\text{align}}(f; \alpha) &\triangleq \mathbb{E}_{(x, x^+)} \left[ \|f(x) - f(x^+)\|_2^\alpha \right], \quad \alpha = 2 \\
+\mathcal{L}_{\text{uniform}}(f; t) &\triangleq \log \mathbb{E}_{x, y \overset{\text{i.i.d.}}{\sim} p_{\text{data}}} \left[ e^{-t \|f(x) - f(y)\|_2^2} \right], \quad t = 2
+\end{align}
+La función multiobjetivo resultante es $\mathcal{L}_{\text{AU}} = \mathcal{L}_{\text{align}} + \lambda \mathcal{L}_{\text{uniform}}$.
