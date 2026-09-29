@@ -27,7 +27,7 @@ cells.append({
         "GITHUB_REPO  = 'https://github.com/maferozuone/PAE-ssl-project.git'\n",
         "MODE         = 'full'   # 'debug' para probar rapido\n",
         "SSL_METHODS  = ['simsiam', 'byol']\n",
-        "DATA_CONFIGS = ['full', 'sas_keep_60pct', 'sas_keep_80pct', 'random_keep_60pct']\n",
+        "DATA_CONFIGS = ['full', 'sas_keep_90pct', 'random_keep_90pct', 'sas_keep_80pct', 'random_keep_80pct', 'sas_keep_60pct', 'random_keep_60pct']\n",
         "N_CLUSTERS   = 101\n",
         "print(f'Modo: {MODE} | Metodos: {SSL_METHODS}')\n",
     ]

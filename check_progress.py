@@ -8,7 +8,15 @@ import os
 from config_final import get_config
 
 METHODS = ["simsiam", "byol", "cpc", "align_uniform"]
-CONFIGS = ["full", "sas_keep_80pct", "sas_keep_60pct", "random_keep_60pct"]
+CONFIGS = [
+    "full",
+    "sas_keep_90pct",
+    "random_keep_90pct",
+    "sas_keep_80pct",
+    "random_keep_80pct",
+    "sas_keep_60pct",
+    "random_keep_60pct",
+]
 
 MACHINE_MAP = {
     "simsiam": "Kaggle",
