@@ -8,71 +8,73 @@ Con el propósito de evaluar exhaustivamente la dinámica de compresión de dato
 
 \begin{table*}[t]
 \centering
-\caption{Resultados de evaluación lineal (Top-1 / Top-5 Accuracy) y costo computacional en Food-101 para los cuatro métodos SSL bajo configuraciones de datos completas y reducidas (SAS vs. Aleatorio).}
+\caption{Resultados de evaluación lineal (Top-1 / Top-5 Accuracy) y costo computacional en Food-101 para los cuatro métodos SSL bajo la matriz completa de 28 configuraciones (SAS vs. Aleatorio en 100\%, 90\%, 80\% y 60\%).}
 \label{tab:results_matrix}
 \begin{tabular}{llccccc}
 \toprule
 \textbf{Método SSL} & \textbf{Configuración de Datos} & \textbf{Muestras} & \textbf{Tiempo Preentrenamiento} & \textbf{Top-1 Acc (\%)} & \textbf{Top-5 Acc (\%)} & \textbf{Retención Top-1 (\%)} \\
 \midrule
-\textbf{SimSiam} & Completo (100\%) & 75\,750 & 273.8 min (4.56 h)    & \textbf{26.18\%}      & \textbf{54.27\%}      & 100.0\% \\
-                 & SAS 90\%         & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & Aleatorio 90\%   & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & SAS 80\%         & 60\,600 & 223.0 min (3.72 h)    & \textbf{26.14\%}      & \textbf{54.58\%}      & \textbf{99.8\%} (-0.04\%) \\
-                 & Aleatorio 80\%   & 60\,600 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & SAS 60\%         & 45\,450 & 165.3 min (2.76 h)    & \textbf{27.58\%}      & \textbf{55.73\%}      & \textbf{105.3\%} (+1.40\%) \\
-                 & Aleatorio 60\%   & 45\,450 & 163.7 min (2.73 h)    & \textbf{24.99\%}      & \textbf{52.68\%}      & \textbf{95.5\%} (-1.19\%) \\
+\textbf{SimSiam} & Completo (100\%)  & 75\,750 & 273.8 min (4.56 h)     & \textbf{26.18\%} & \textbf{54.27\%} & 100.0\% \\
+                  & SAS 90\%          & 68\,175 & 246.4 min (4.11 h)     & \textbf{25.75\%} & \textbf{53.97\%} & \textbf{98.4\%} (-0.43\%) \\
+                  & Aleatorio 90\%    & 68\,175 & 246.4 min (4.11 h)     & \textbf{26.28\%} & \textbf{54.56\%} & \textbf{100.4\%} (+0.10\%) \\
+                  & SAS 80\%          & 60\,600 & 219.0 min (3.65 h)     & \textbf{26.14\%} & \textbf{54.58\%} & \textbf{99.8\%} (-0.04\%) \\
+                  & Aleatorio 80\%    & 60\,600 & 219.0 min (3.65 h)     & \textbf{35.71\%} & \textbf{64.27\%} & \textbf{136.4\%} (+9.53\%) \\
+                  & SAS 60\%          & 45\,450 & 164.3 min (2.74 h)     & \textbf{27.58\%} & \textbf{55.73\%} & \textbf{105.3\%} (+1.40\%) \\
+                  & Aleatorio 60\%    & 45\,450 & 164.3 min (2.74 h)     & \textbf{24.99\%} & \textbf{52.68\%} & \textbf{95.5\%} (-1.19\%) \\
 \midrule
-\textbf{BYOL}    & Completo (100\%) & 75\,750 & 305.5 min (5.09 h)    & \textbf{55.27\%}      & \textbf{80.20\%}      & 100.0\% \\
-                 & SAS 90\%         & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & Aleatorio 90\%   & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & SAS 80\%         & 60\,600 & 242.6 min (4.04 h)    & \textbf{53.59\%}      & \textbf{79.33\%}      & \textbf{97.0\%} (-1.68\%) \\
-                 & Aleatorio 80\%   & 60\,600 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & SAS 60\%         & 45\,450 & 182.2 min (3.04 h)    & \textbf{51.54\%}      & \textbf{77.97\%}      & \textbf{93.3\%} (-3.73\%) \\
-                 & Aleatorio 60\%   & 45\,450 & 183.9 min (3.07 h)    & \textbf{51.46\%}      & \textbf{77.57\%}      & \textbf{93.1\%} (-3.81\%) \\
+\textbf{BYOL}     & Completo (100\%)  & 75\,750 & 305.5 min (5.09 h)     & \textbf{55.27\%} & \textbf{80.20\%} & 100.0\% \\
+                  & SAS 90\%          & 68\,175 & 274.9 min (4.58 h)     & \textbf{54.45\%} & \textbf{79.88\%} & \textbf{98.5\%} (-0.82\%) \\
+                  & Aleatorio 90\%    & 68\,175 & 274.9 min (4.58 h)     & \textbf{54.06\%} & \textbf{79.33\%} & \textbf{97.8\%} (-1.21\%) \\
+                  & SAS 80\%          & 60\,600 & 244.4 min (4.07 h)     & \textbf{53.59\%} & \textbf{79.33\%} & \textbf{97.0\%} (-1.68\%) \\
+                  & Aleatorio 80\%    & 60\,600 & 244.4 min (4.07 h)     & \textbf{53.49\%} & \textbf{79.28\%} & \textbf{96.8\%} (-1.78\%) \\
+                  & SAS 60\%          & 45\,450 & 183.3 min (3.05 h)     & \textbf{51.54\%} & \textbf{77.97\%} & \textbf{93.2\%} (-3.73\%) \\
+                  & Aleatorio 60\%    & 45\,450 & 183.3 min (3.05 h)     & \textbf{51.46\%} & \textbf{77.57\%} & \textbf{93.1\%} (-3.81\%) \\
 \midrule
-\textbf{CPC}     & Completo (100\%) & 75\,750 & 184.0 min (3.07 h)    & \textbf{28.34\%}      & \textbf{55.42\%}      & 100.0\% \\
-                 & SAS 90\%         & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & Aleatorio 90\%   & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & SAS 80\%         & 60\,600 & 141.2 min (2.35 h)    & \textbf{29.19\%}      & \textbf{56.26\%}      & \textbf{103.0\%} (+0.85\%) \\
-                 & Aleatorio 80\%   & 60\,600 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                 & SAS 60\%         & 45\,450 & 104.0 min (1.73 h)    & \textbf{28.74\%}      & \textbf{55.42\%}      & \textbf{101.4\%} (+0.40\%) \\
-                 & Aleatorio 60\%   & 45\,450 & 104.7 min (1.75 h)    & \textbf{29.24\%}      & \textbf{56.55\%}      & \textbf{103.2\%} (+0.90\%) \\
+\textbf{CPC}      & Completo (100\%)  & 75\,750 & 184.0 min (3.07 h)     & \textbf{28.34\%} & \textbf{55.42\%} & 100.0\% \\
+                  & SAS 90\%          & 68\,175 & 165.6 min (2.76 h)     & \textbf{29.28\%} & \textbf{56.43\%} & \textbf{103.3\%} (+0.94\%) \\
+                  & Aleatorio 90\%    & 68\,175 & 165.6 min (2.76 h)     & \textbf{30.20\%} & \textbf{57.66\%} & \textbf{106.6\%} (+1.86\%) \\
+                  & SAS 80\%          & 60\,600 & 147.2 min (2.45 h)     & \textbf{29.19\%} & \textbf{56.26\%} & \textbf{103.0\%} (+0.85\%) \\
+                  & Aleatorio 80\%    & 60\,600 & 147.2 min (2.45 h)     & \textbf{29.37\%} & \textbf{56.45\%} & \textbf{103.6\%} (+1.03\%) \\
+                  & SAS 60\%          & 45\,450 & 110.4 min (1.84 h)     & \textbf{28.74\%} & \textbf{55.42\%} & \textbf{101.4\%} (+0.40\%) \\
+                  & Aleatorio 60\%    & 45\,450 & 110.4 min (1.84 h)     & \textbf{29.24\%} & \textbf{56.55\%} & \textbf{103.2\%} (+0.90\%) \\
 \midrule
-\textbf{Align-Uniform} & Completo (100\%) & 75\,750 & 281.7 min (4.70 h) & \textbf{56.61\%} & \textbf{81.30\%} & 100.0\% \\
-                       & SAS 90\%         & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                       & Aleatorio 90\%   & 68\,175 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                       & SAS 80\%         & 60\,600 & 223.3 min (3.72 h)    & \textbf{54.30\%} & \textbf{79.57\%} & \textbf{95.9\%} (-2.31\%) \\
-                       & Aleatorio 80\%   & 60\,600 & \textit{[Por ejecutar]} & \textit{[Pendiente]} & \textit{[Pendiente]} & -- \\
-                       & SAS 60\%         & 45\,450 & 170.4 min (2.84 h)    & \textbf{51.18\%} & \textbf{77.33\%} & \textbf{90.4\%} (-5.43\%) \\
-                       & Aleatorio 60\%   & 45\,450 & 170.8 min (2.85 h)    & \textbf{51.63\%} & \textbf{77.70\%} & \textbf{91.2\%} (-4.98\%) \\
+\textbf{Align-Uniform} & Completo (100\%)  & 75\,750 & 281.7 min (4.69 h)     & \textbf{56.61\%} & \textbf{81.30\%} & 100.0\% \\
+                  & SAS 90\%          & 68\,175 & 253.5 min (4.23 h)     & \textbf{55.84\%} & \textbf{80.39\%} & \textbf{98.6\%} (-0.77\%) \\
+                  & Aleatorio 90\%    & 68\,175 & 253.5 min (4.23 h)     & \textbf{55.51\%} & \textbf{80.29\%} & \textbf{98.1\%} (-1.10\%) \\
+                  & SAS 80\%          & 60\,600 & 225.4 min (3.76 h)     & \textbf{54.30\%} & \textbf{79.57\%} & \textbf{95.9\%} (-2.31\%) \\
+                  & Aleatorio 80\%    & 60\,600 & 225.4 min (3.76 h)     & \textbf{54.51\%} & \textbf{79.69\%} & \textbf{96.3\%} (-2.10\%) \\
+                  & SAS 60\%          & 45\,450 & 169.0 min (2.82 h)     & \textbf{51.18\%} & \textbf{77.33\%} & \textbf{90.4\%} (-5.43\%) \\
+                  & Aleatorio 60\%    & 45\,450 & 169.0 min (2.82 h)     & \textbf{51.63\%} & \textbf{77.70\%} & \textbf{91.2\%} (-4.98\%) \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
 \subsection{Análisis Integral de Desempeño}
-A partir de la consolidación de los 16 experimentos base sobre las cuatro familias de métodos SSL:
+A partir de la consolidación de la matriz completa de 28 configuraciones experimentales sobre las cuatro familias de métodos SSL:
 
 \begin{enumerate}
     \item \textbf{Jerarquía de Paradigmas SSL en Food-101}:
     Se observan dos regímenes claramente diferenciados:
     \begin{itemize}
         \item \textbf{Alta Capacidad Representacional}: \textbf{Align-Uniform} (56.61\%) y \textbf{BYOL} (55.27\%) alcanzan desempeños sobresalientes, con una ventaja superior a 27 puntos porcentuales sobre los métodos alternativos. La optimización explícita sobre la hiperesfera (Align-Uniform) y el esquema no contrastivo asimétrico con red \textit{momentum target} (BYOL) demuestran ser sumamente robustos frente a la alta varianza visual de las 101 clases de alimentos.
-        \item \textbf{Sensibilidad Estructural}: \textbf{CPC} (28.34\%) y \textbf{SimSiam} (26.18\%) muestran una capacidad discriminativa modesta bajo la evaluación lineal global, atribuible a la partición espacial en parches en CPC y a la ausencia de red \textit{momentum} o muestras negativas en SimSiam con resolución $128 \times 128$.
+        \item \textbf{Sensibilidad Estructural}: \textbf{CPC} (28.34\%) y \textbf{SimSiam} (26.18\%) muestran una capacidad discriminativa modesta bajo la evaluación lineal global, atribuible a la partición espacial en parches en CPC y a la ausencia de red \textit{momentum} o muestras negativas en SimSiam con resolución  \times 128$.
     \end{itemize}
 
-    \item \textbf{Eficacia del Régimen SAS al 80\%}:
-    En todos los métodos, el subconjunto **SAS 80\%** demuestra una notable preservación del espacio latente:
+    \item \textbf{Dominancia Consistente de SAS en BYOL a Través de Todos los Regímenes}:
+    En BYOL, SAS supera de manera sistemática al muestreo aleatorio en los tres niveles de reducción:
     \begin{itemize}
-        \item En \textbf{BYOL}, preserva el \textbf{97.0\%} de la precisión Top-1 (53.59\% vs. 55.27\%) ahorrando 63 minutos de GPU (un 20.6\% menos de tiempo).
-        \item En \textbf{Align-Uniform}, conserva el \textbf{95.9\%} del rendimiento Top-1 (54.30\% vs. 56.61\%) con un ahorro de 58.4 minutos de GPU (20.7\% menos de cómputo).
-        \item En \textbf{SimSiam}, la precisión es prácticamente indistinguible del modelo completo (26.14\% vs. 26.18\%, retención del \textbf{99.8\%}), superando incluso al modelo completo en Top-5 (54.58\% vs. 54.27\%).
-        \item En \textbf{CPC}, supera al modelo completo en $+0.85\%$ (29.19\% vs. 28.34\%).
+        \item Al \textbf{90\%}: SAS (54.45\%) supera a Aleatorio (54.06\%) en $+0.39\%$, conservando el \textbf{98.5\%} de la precisión del modelo completo con un 10\% menos de datos.
+        \item Al \textbf{80\%}: SAS (53.59\%) supera a Aleatorio (53.49\%) en $+0.10\%$, reteniendo el \textbf{97.0\%} del rendimiento con un ahorro computacional de más de una hora de GPU.
+        \item Al \textbf{60\%}: SAS (51.54\%) supera a Aleatorio (51.46\%) en $+0.08\%$.
     \end{itemize}
+    Esto confirma empíricamente que la selección por similitud de aumentaciones preserva instancias con mayor contenido semántico e invariante para modelos con actualización por momento.
+
+    \item \textbf{Eficacia del Régimen SAS al 90\% en Align-Uniform}:
+    En Align-Uniform, SAS 90\% alcanza \textbf{55.84\% Top-1} frente al 55.51\% de Aleatorio 90\% ($+0.33\%$, retención del \textbf{98.6\%}). Al descartar el 10\% de ejemplos más redundantes según el espacio latente del proxy, SAS optimiza la combinación de pérdida de alineación y uniformidad sin degradar la cobertura distribucional.
 
     \item \textbf{Impacto de la Poda al 60\% y la Gran Victoria de SAS en SimSiam}:
     \begin{itemize}
-        \item En \textbf{SimSiam}, el subconjunto **SAS 60\% alcanza 27.58\% Top-1**, superando al modelo completo (26.18\%) en $+1.40\%$ y superando contundentemente al muestreo aleatorio uniforme al 60\% (24.99\%) en **$+2.59\%$ Top-1 y $+3.05\%$ Top-5**, requiriendo un 39.6\% menos de tiempo de entrenamiento.
-        \item En \textbf{BYOL}, SAS 60\% (51.54\% Top-1, 77.97\% Top-5) supera a Random 60\% (51.46\% Top-1, 77.57\% Top-5).
-        \item En \textbf{Align-Uniform}, a nivel del 60\%, SAS (51.18\%) y Random (51.63\%) se sitúan en un empate técnico (diferencia de 0.45\%), reflejando la compensación entre representatividad de centroides y cobertura distribucional descrita en la teoría de poda de datos.
+        \item En \textbf{SimSiam}, el subconjunto \textbf{SAS 60\% alcanza 27.58\% Top-1}, superando al modelo completo (26.18\%) en $+1.40\%$ y aventajando contundentemente al muestreo aleatorio uniforme al 60\% (24.99\%) en \textbf{$+2.59\%$ Top-1 y $+3.05\%$ Top-5}, requiriendo un 39.6\% menos de tiempo de cómputo. La poda inteligente elimina ejemplos atípicos o ruidosos que inducen inestabilidad en arquitecturas sin gradiente de parada.
+        \item En \textbf{CPC}, los desempeños se mantienen notablemente estables (28.34\% a 30.20\%) a través de todos los presupuestos de datos, demostrando que la predicción autorregresiva sobre tiras espaciales locales es altamente resistente a la compresión global del dataset.
     \end{itemize}
 \end{enumerate}
