@@ -12,12 +12,13 @@ Se utiliza el conjunto de datos Food-101 \cite{bossard2014food101}, compuesto po
     \item Normalización con la media y desviación estándar de ImageNet.
 \end{itemize}
 
-\subsection{Plataformas de Cómputo Distribuidas}
-Para viabilizar el volumen experimental sin sobrepasar límites de cuota, el entrenamiento se distribuyó en dos estaciones de trabajo heterogéneas:
-\begin{enumerate}
-    \item \textbf{Estación A (Kaggle Cloud)}: GPU NVIDIA Tesla T4 / P100 (16\,GB VRAM), asignada a los modelos \textit{SimSiam} y \textit{BYOL}.
-    \item \textbf{Estación B (Laboratorio de Mecatrónica)}: Estación de trabajo local con GPU NVIDIA RTX A2000 (12\,GB VRAM, arquitectura Ampere) y almacenamiento NVMe de 1\,TB, asignada a los modelos \textit{CPC} y \textit{Align-Uniform}.
-\end{enumerate}
+\subsection{Plataforma de Cómputo y Entorno Experimental}
+Para garantizar la reproducibilidad y la estricta comparabilidad de los tiempos de cómputo y consumo de recursos, todos los 28 experimentos de preentrenamiento SSL y evaluación lineal se ejecutaron de manera homogénea y secuencial sobre una estación de trabajo dedicada equipada con:
+\begin{itemize}
+    \item \textbf{GPU}: NVIDIA RTX A2000 (12\,GB VRAM GDDR6 con ECC, arquitectura Ampere, 3328 núcleos CUDA y 104 núcleos Tensor).
+    \item \textbf{Almacenamiento y Sistema}: Unidad de estado sólido NVMe PCIe de 1\,TB y entorno controlado con PyTorch 2.13, CUDA 12 y precisión mixta automática (\texttt{torch.amp}).
+\end{itemize}
+
 
 \subsection{Hiperparámetros de Entrenamiento}
 \begin{table}[ht]

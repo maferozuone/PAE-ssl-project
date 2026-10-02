@@ -1,10 +1,10 @@
 \section{Resultados Experimentales}
 \label{sec:results}
 
-\subsection{Matriz de Rendimiento Comparativo}
-En la Tabla~\ref{tab:results_matrix} se presenta la evaluación consolidada del rendimiento tras la evaluación lineal (\textit{linear probing}) a 100 épocas sobre el conjunto de prueba de Food-101 ($N=25\,250$), así como los tiempos de preentrenamiento invertidos en cada configuración sobre la GPU de la estación experimental (NVIDIA RTX A2000, 12~GB VRAM).
+En esta sección se presentan y analizan los resultados empíricos derivados de la ejecución de la matriz completa de 28 configuraciones experimentales sobre el conjunto de datos Food-101. La evaluación cuantifica tanto la calidad de las representaciones visuales obtenidas tras 100 épocas de evaluación lineal (\textit{linear probing}) como el ahorro en tiempo de cómputo sobre la estación de trabajo GPU dedicada (NVIDIA RTX A2000, 12~GB VRAM).
 
-Con el propósito de evaluar exhaustivamente la dinámica de compresión de datos y aislar la ventaja algorítmica de SAS frente a la selección estocástica, la matriz experimental abarca el conjunto completo (100\%) y tres regímenes de reducción controlada: 90\%, 80\% y 60\%, evaluando tanto la selección inteligente por similitud de aumentación (SAS) como el muestreo aleatorio uniforme (\textit{Random}).
+\subsection{Matriz de Rendimiento Consolidada}
+En la Tabla~\ref{tab:results_matrix} se condensa la totalidad de las 28 evaluaciones experimentales, reportando la exactitud Top-1 y Top-5 sobre las 25\,250 muestras de prueba independientes, el tiempo estimado de preentrenamiento SSL y la tasa relativa de retención frente al modelo entrenado sobre el 100\% de los datos.
 
 \begin{table*}[t]
 \centering
@@ -49,32 +49,77 @@ Con el propósito de evaluar exhaustivamente la dinámica de compresión de dato
 \end{tabular}
 \end{table*}
 
-\subsection{Análisis Integral de Desempeño}
-A partir de la consolidación de la matriz completa de 28 configuraciones experimentales sobre las cuatro familias de métodos SSL:
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.96\textwidth]{figures/fig1_retention_curves}
+\caption{Evaluación comparativa de la exactitud Top-1 (\%) en función del porcentaje de datos de entrenamiento conservados (60\%, 80\%, 90\% y 100\%) para las cuatro familias de métodos SSL sobre Food-101. Se compara la selección guiada por similitud de aumentación (SAS, línea continua con marcadores circulares) frente al control estocástico de muestreo aleatorio uniforme (línea punteada con cuadrados). La línea horizontal punteada representa el nivel de referencia del modelo entrenado sobre el 100\% de los datos.}
+\label{fig:retention_curves}
+\end{figure*}
+
+\subsection{Dinámica de Curvas de Retención: SAS frente a Muestreo Aleatorio}
+La Fig.~\ref{fig:retention_curves} ilustra la trayectoria de degradación de la exactitud Top-1 al reducir progresivamente el volumen de entrenamiento de 100\% a 60\%:
 
 \begin{enumerate}
-    \item \textbf{Jerarquía de Paradigmas SSL en Food-101}:
-    Se observan dos regímenes claramente diferenciados:
+    \item \textbf{Superioridad Sistemática en BYOL}:
+    En BYOL (Fig.~\ref{fig:retention_curves}b), SAS supera a la selección aleatoria a través de todos los presupuestos de retención:
     \begin{itemize}
-        \item \textbf{Alta Capacidad Representacional}: \textbf{Align-Uniform} (56.61\%) y \textbf{BYOL} (55.27\%) alcanzan desempeños sobresalientes, con una ventaja superior a 27 puntos porcentuales sobre los métodos alternativos. La optimización explícita sobre la hiperesfera (Align-Uniform) y el esquema no contrastivo asimétrico con red \textit{momentum target} (BYOL) demuestran ser sumamente robustos frente a la alta varianza visual de las 101 clases de alimentos.
-        \item \textbf{Sensibilidad Estructural}: \textbf{CPC} (28.34\%) y \textbf{SimSiam} (26.18\%) muestran una capacidad discriminativa modesta bajo la evaluación lineal global, atribuible a la partición espacial en parches en CPC y a la ausencia de red \textit{momentum} o muestras negativas en SimSiam con resolución  \times 128$.
+        \item Al \textbf{90\%}: SAS logra \textbf{54.45\%} frente a \textbf{54.06\%} de la selección aleatoria ($+0.39\%$), conservando el \textbf{98.5\%} de la capacidad del modelo completo con un ahorro del 10\% en cómputo.
+        \item Al \textbf{80\%}: SAS alcanza \textbf{53.59\%} frente a \textbf{53.49\%} ($+0.10\%$), reteniendo el \textbf{97.0\%} del rendimiento de la red completa y recortando más de una hora de cómputo en GPU.
+        \item Al \textbf{60\%}: SAS obtiene \textbf{51.54\%} frente a \textbf{51.46\%} ($+0.08\%$).
     \end{itemize}
+    Esta ventaja consistente confirma que, al basarse en una red objetivo de actualización lenta (\textit{target network}), BYOL capitaliza de forma óptima los ejemplos densos e informativos que SAS extrae alrededor de los centroides semánticos latentes.
 
-    \item \textbf{Dominancia Consistente de SAS en BYOL a Través de Todos los Regímenes}:
-    En BYOL, SAS supera de manera sistemática al muestreo aleatorio en los tres niveles de reducción:
-    \begin{itemize}
-        \item Al \textbf{90\%}: SAS (54.45\%) supera a Aleatorio (54.06\%) en $+0.39\%$, conservando el \textbf{98.5\%} de la precisión del modelo completo con un 10\% menos de datos.
-        \item Al \textbf{80\%}: SAS (53.59\%) supera a Aleatorio (53.49\%) en $+0.10\%$, reteniendo el \textbf{97.0\%} del rendimiento con un ahorro computacional de más de una hora de GPU.
-        \item Al \textbf{60\%}: SAS (51.54\%) supera a Aleatorio (51.46\%) en $+0.08\%$.
-    \end{itemize}
-    Esto confirma empíricamente que la selección por similitud de aumentaciones preserva instancias con mayor contenido semántico e invariante para modelos con actualización por momento.
+    \item \textbf{Régimen SAS 90\% en Align-Uniform}:
+    En Align-Uniform (Fig.~\ref{fig:retention_curves}a), SAS 90\% alcanza \textbf{55.84\% Top-1}, superando a Aleatorio 90\% (55.51\%) en $+0.33\%$ y preservando el \textbf{98.6\%} del rendimiento del modelo completo (56.61\%). Esto evidencia que podar el 10\% de instancias más atípicas o redundantes afina la distribución en la hiperesfera sin sacrificar la uniformidad global.
 
-    \item \textbf{Eficacia del Régimen SAS al 90\% en Align-Uniform}:
-    En Align-Uniform, SAS 90\% alcanza \textbf{55.84\% Top-1} frente al 55.51\% de Aleatorio 90\% ($+0.33\%$, retención del \textbf{98.6\%}). Al descartar el 10\% de ejemplos más redundantes según el espacio latente del proxy, SAS optimiza la combinación de pérdida de alineación y uniformidad sin degradar la cobertura distribucional.
+    \item \textbf{Control de Colapso en SimSiam al 60\%}:
+    El resultado más sobresaliente a nivel de poda profunda se observa en SimSiam (Fig.~\ref{fig:retention_curves}d): SAS 60\% alcanza \textbf{27.58\% Top-1}, superando al muestreo aleatorio al 60\% (24.99\%) en \textbf{$+2.59\%$ Top-1 y $+3.05\%$ Top-5}, e incluso rebasando al modelo entrenado sobre el 100\% de los datos (26.18\% en $+1.40\%$). Al carecer de muestras negativas y de red de momento, SimSiam es propenso a inestabilidades cuando el conjunto contiene instancias ruidosas; SAS actúa como un filtro protector que retiene únicamente pares visualmente coherentes.
 
-    \item \textbf{Impacto de la Poda al 60\% y la Gran Victoria de SAS en SimSiam}:
-    \begin{itemize}
-        \item En \textbf{SimSiam}, el subconjunto \textbf{SAS 60\% alcanza 27.58\% Top-1}, superando al modelo completo (26.18\%) en $+1.40\%$ y aventajando contundentemente al muestreo aleatorio uniforme al 60\% (24.99\%) en \textbf{$+2.59\%$ Top-1 y $+3.05\%$ Top-5}, requiriendo un 39.6\% menos de tiempo de cómputo. La poda inteligente elimina ejemplos atípicos o ruidosos que inducen inestabilidad en arquitecturas sin gradiente de parada.
-        \item En \textbf{CPC}, los desempeños se mantienen notablemente estables (28.34\% a 30.20\%) a través de todos los presupuestos de datos, demostrando que la predicción autorregresiva sobre tiras espaciales locales es altamente resistente a la compresión global del dataset.
-    \end{itemize}
+    \item \textbf{Invarianza Espacial en CPC}:
+    En CPC (Fig.~\ref{fig:retention_curves}c), el rendimiento se sitúa entre 28.34\% y 30.20\% en todas las condiciones. La formulación autorregresiva sobre tiras espaciales locales extrae dependencias estructurales que resultan intrínsecamente inmunes a la compresión global del número de imágenes.
 \end{enumerate}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig2_efficiency_pareto}
+\caption{Compromiso de eficiencia computacional: Exactitud Top-1 (\%) frente al tiempo total de preentrenamiento SSL invertido en GPU NVIDIA RTX A2000 (horas). La región sombreada destaca la zona de eficiencia óptima lograda por SAS en los presupuestos del 80\% y 90\%, donde se obtiene un ahorro del 10\% al 20\% de GPU con una retención de desempeño superior al 97\%.}
+\label{fig:efficiency_pareto}
+\end{figure}
+
+\subsection{Compromiso de Eficiencia y Frontera de Pareto}
+En la Fig.~\ref{fig:efficiency_pareto} se grafica el compromiso biobjetivo entre costo computacional (horas de GPU) y exactitud Top-1 alcanzada. Se identifica una clara \textit{región óptima de eficiencia} delimitada entre 3.6 y 4.6 horas de cómputo:
+\begin{itemize}
+    \item En \textbf{Align-Uniform}, SAS al 80\% reduce el tiempo de entrenamiento de 4.69 a 3.76 horas (ahorro neto de 56 minutos), cediendo apenas 2.31 puntos porcentuales de exactitud.
+    \item En \textbf{BYOL}, SAS al 90\% disminuye el entrenamiento de 5.09 a 4.58 horas (ahorro de 31 minutos) conservando el 98.5\% de la precisión, mientras que SAS al 80\% reduce el tiempo a 4.07 horas (ahorro de 61 minutos) reteniendo el 97.0\% de la exactitud.
+\end{itemize}
+Desde una perspectiva de ingeniería mecatrónica, este compromiso sitúa a SAS 80\% y 90\% como configuraciones ideales para el ciclo de vida de desarrollo ágil y prototipado rápido de sistemas de percepción robótica.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.96\textwidth]{figures/fig3_convergence}
+\caption{Dinámica de convergencia durante las 100 épocas de evaluación lineal (\textit{linear probing}) sobre el conjunto de prueba de Food-101 para Align-Uniform y BYOL. Se compara el modelo completo (100\%, negro) con las variantes SAS al 90\% (azul), 80\% (verde), 60\% (naranja) y el control aleatorio al 60\% (gris punteado).}
+\label{fig:convergence}
+\end{figure*}
+
+\subsection{Dinámica de Convergencia en Evaluación Lineal}
+La Fig.~\ref{fig:convergence} detalla la evolución de la exactitud Top-1 en el conjunto de prueba a lo largo de las 100 épocas de entrenamiento del clasificador lineal para los dos métodos de mayor desempeño (Align-Uniform y BYOL):
+\begin{itemize}
+    \item \textbf{Rapidez de Aprendizaje Inicial}: Todas las configuraciones preentrenadas con SAS muestran una pendiente de ascenso pronunciada en las primeras 15 épocas, alcanzando más del 80\% de su precisión máxima antes de la época 30.
+    \item \textbf{Ausencia de Sobreajuste}: La trayectoria de exactitud de prueba se mantiene monotónicamente creciente y asintótica, estabilizándose entre las épocas 80 y 100 gracias al esquema de enfriamiento por coseno (\textit{Cosine Annealing}).
+    \item \textbf{Separabilidad Estable de Espacios Latentes}: El orden relativo de las curvas se preserva de manera consistente desde la época 20 hasta la 100: $\text{Completo} \approx \text{SAS 90\%} > \text{SAS 80\%} > \text{SAS 60\%} \approx \text{Aleatorio 60\%}$, demostrando que la calidad geométrica inducida en el preentrenamiento es intrínseca y transferible.
+\end{itemize}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig4_relative_retention}
+\caption{Tasa de retención relativa de exactitud Top-1 (\% respecto al modelo entrenado con el 100\% de los datos) para SAS y la selección aleatoria a través de los tres presupuestos de reducción (90\%, 80\% y 60\%). La línea punteada indica el 100\% de paridad con el modelo de conjunto completo.}
+\label{fig:relative_retention}
+\end{figure}
+
+\subsection{Retención Relativa entre Paradigmas de Auto-Supervisión}
+La Fig.~\ref{fig:relative_retention} compara de forma unificada la fracción de rendimiento preservada por cada paradigma. A partir de esta visualización emergen tres conclusiones estructurales:
+\begin{itemize}
+    \item \textbf{Robusteza de la Red Objetivo (BYOL)}: Mantiene tasas de retención del 98.5\%, 97.0\% y 93.2\% al 90\%, 80\% y 60\%, superando en todas las comparaciones al muestreo aleatorio.
+    \item \textbf{Regularización Benéfica en Métodos No Constrastivos Simples (SimSiam)}: A niveles de poda del 60\%, SAS logra una retención del \textbf{105.3\%} (superando al modelo original), mientras que el muestreo aleatorio cae al 95.5\%, arrojando una brecha favorable a SAS de casi 10 puntos porcentuales relativos.
+    \item \textbf{Insensibilidad de Modelos Espaciales (CPC)}: La predicción autorregresiva local exhibe retenciones superiores al 100\% en todas las condiciones de subconjunto, corroborando que para tareas contrastivas por franjas, la redundancia inter-imagen es elevada.
+\end{itemize}

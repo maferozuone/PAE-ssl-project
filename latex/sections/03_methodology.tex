@@ -14,7 +14,7 @@ Dado un conjunto no etiquetado $\mathcal{D} = \{x_i\}_{i=1}^N$ con $N = 75\,750$
     \min_{\{C_k\}_{k=1}^K} \sum_{k=1}^K \sum_{z_i \in C_k} \|z_i - \mu_k\|_2^2
     \end{equation}
     donde $\mu_k$ representa el centroide del grupo $k$.
-    \item \textbf{Muestreo por Importancia Intra-Cluster}: Para cada conglomerado $C_k$, se asigna una probabilidad de selección proporcional a la similitud de aumento, priorizando muestras centrales y representativas que minimizan la varianza del gradiente de la pérdida contrastiva. La cuota por cluster se asigna de forma estratificada hasta alcanzar el presupuesto global $B = \lfloor \alpha N \rfloor$, donde $\alpha \in \{0.80, 0.60\}$.
+    \item \textbf{Muestreo por Importancia Intra-Cluster}: Para cada conglomerado $C_k$, se asigna una probabilidad de selección proporcional a la similitud de aumento, priorizando muestras centrales y representativas que minimizan la varianza del gradiente de la pérdida contrastiva. La cuota por cluster se asigna de forma estratificada hasta alcanzar el presupuesto global $B = \lfloor \alpha N \rfloor$, donde $\alpha \in \{0.90, 0.80, 0.60\}$, correspondiente a retenciones del 90\%, 80\% y 60\% de los datos de entrenamiento.
 \end{enumerate}
 
 \subsection{Formulación de los Modelos SSL Evaluados}

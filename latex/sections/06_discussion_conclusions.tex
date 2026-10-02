@@ -2,41 +2,42 @@
 \label{sec:discussion}
 
 \subsection{Dinámica de Selección SAS vs. Muestreo Aleatorio y Tasa de Retención}
-Los resultados empíricos obtenidos sobre los 16 experimentos base permiten contrastar los postulados teóricos del algoritmo SAS \cite{joshi2023sas} con la dinámica de leyes de escalamiento y poda de datos expuesta por Sorscher et al. \cite{sorscher2022beyond}:
+Los resultados empíricos consolidados sobre la matriz completa de 28 experimentos permiten contrastar los postulados teóricos del algoritmo SAS \cite{joshi2023sas} con la dinámica de leyes de escalamiento y poda de datos expuesta por Sorscher et al. \cite{sorscher2022beyond}:
 
 \begin{enumerate}
-    \item \textbf{El Régimen Óptimo de Retención (80\%--90\%)}:
-    El principio subyacente a SAS establece que los ejemplos de mayor utilidad para el aprendizaje auto-supervisado contrastivo son aquellos que maximizan la similitud esperada de aumentación con el resto de la clase latente. Al podar un porcentaje moderado de datos (10\% a 20\%), el algoritmo actúa como un filtro natural de ruido, descartando imágenes con oclusiones severas, artefactos de compresión o perspectivas anómalas que introducen gradientes contradictorios en la optimización. En nuestros experimentos, esto se confirma de forma transversal:
+    \item \textbf{El Régimen de Poda Moderada (80\%--90\%)}:
+    El principio fundamental de SAS establece que los ejemplos más informativos para el aprendizaje auto-supervisado contrastivo son aquellos que maximizan la similitud esperada de aumentación con el resto de la clase latente. Al podar un porcentaje moderado de datos (10\% a 20\%), el algoritmo actúa como un filtro natural de ruido, descartando imágenes con oclusiones severas, artefactos de compresión o perspectivas anómalas que introducen gradientes contradictorios en la optimización:
     \begin{itemize}
-        \item En \textbf{BYOL}, SAS 80\% retiene el \textbf{97.0\%} de la precisión Top-1 del modelo completo (53.59\% vs. 55.27\%) ahorrando más de 1 hora de GPU (20.6\% de aceleración).
-        \item En \textbf{Align-Uniform}, SAS 80\% conserva el \textbf{95.9\%} del rendimiento Top-1 (54.30\% vs. 56.61\%) con un ahorro directo de 58.4 minutos de GPU (20.7\% de reducción).
-        \item En \textbf{SimSiam}, la precisión es prácticamente idéntica a la del modelo completo (26.14\% vs. 26.18\%, retención del 99.8\%) y supera al modelo completo en Top-5 (54.58\% vs. 54.27\%).
-        \item En \textbf{CPC}, la exclusión del 20\% de muestras mediante SAS supera en $+0.85\%$ al modelo entrenado sobre el 100\% de los datos (29.19\% vs. 28.34\%), confirmando el beneficio desparasitador del filtrado de datos en formulaciones autorregresivas.
+        \item En \textbf{BYOL}, SAS supera a la selección aleatoria tanto al 90\% (54.45\% vs. 54.06\%) como al 80\% (53.59\% vs. 53.49\%), reteniendo el \textbf{98.5\%} y el \textbf{97.0\%} de la precisión Top-1 original con ahorros directos de entre 31 y 61 minutos por ciclo de preentrenamiento.
+        \item En \textbf{Align-Uniform}, SAS al 90\% alcanza el \textbf{55.84\%} (frente al 55.51\% de la selección aleatoria, retención del \textbf{98.6\%}), confirmando que la eliminación del 10\% de muestras periféricas en el espacio latente del proxy optimiza la convergencia hacia el estado de hiper-alineación y uniformidad en la esfera.
+        \item En \textbf{SimSiam}, SAS al 80\% (26.14\%) preserva el \textbf{99.8\%} de la exactitud Top-1 del modelo completo (26.18\%) y supera a este último en Top-5 (54.58\% frente a 54.27\%).
+        \item En \textbf{CPC}, los subconjuntos reducidos mediante SAS al 90\% (29.28\%) y 80\% (29.19\%) superan consistentemente al modelo completo (28.34\%), demostrando que el aprendizaje predictivo autorregresivo se beneficia del descarte de muestras redundantes.
     \end{itemize}
     
     \item \textbf{Comportamiento al 60\%: Victoria Contundente en SimSiam y Convergencia en Métodos Contrastivos}:
     \begin{itemize}
-        \item \textbf{SimSiam}: La poda inteligente exhibe su mayor ventaja relativa. SAS 60\% no solo supera al modelo completo en $+1.40\%$ (27.58\% vs. 26.18\%), sino que **supera contundentemente al muestreo aleatorio al 60\% en $+2.59\%$ Top-1 y $+3.05\%$ Top-5** (27.58\% frente a 24.99\%). Al carecer de muestras negativas y de red \textit{momentum target}, SimSiam es altamente vulnerable a representaciones degeneradas cuando se introduce ruido estocástico; SAS previene este colapso seleccionando prototipos consistentes.
-        \item \textbf{BYOL y Align-Uniform}: En BYOL, SAS 60\% (51.54\%) se mantiene superior al muestreo aleatorio (51.46\%). En Align-Uniform, SAS (51.18\%) y Random (51.63\%) se sitúan en un empate técnico (diferencia de 0.45\%). Esto valida la predicción de \cite{sorscher2022beyond}: a niveles de poda profunda (40\% de descarte), en datasets de grano fino como Food-101, forzar la selección exclusivamente sobre regiones hiperdensas sacrifica sub-modas visuales, donde la dispersión estocástica uniforme logra un soporte equivalente.
+        \item \textbf{SimSiam}: La poda inteligente exhibe su mayor ventaja relativa. SAS 60\% no solo supera al modelo completo en $+1.40\%$ (27.58\% vs. 26.18\%), sino que **aventaja contundentemente al muestreo aleatorio al 60\% en $+2.59\%$ Top-1 y $+3.05\%$ Top-5** (27.58\% frente a 24.99\%). Al carecer de muestras negativas y de red \textit{momentum target}, SimSiam es altamente vulnerable a representaciones degeneradas cuando se introduce ruido estocástico; SAS previene este colapso seleccionando prototipos consistentes.
+        \item \textbf{BYOL y Align-Uniform}: En BYOL, SAS 60\% (51.54\%) se mantiene superior al muestreo aleatorio (51.46\%). En Align-Uniform, SAS (51.18\%) y Random (51.63\%) se sitúan en un empate técnico (diferencia de 0.45\%). Esto valida la predicción de Sorscher et al. \cite{sorscher2022beyond}: a niveles de poda profunda (40\% de descarte), en datasets de grano fino como Food-101, forzar la selección exclusivamente sobre regiones hiperdensas sacrifica sub-modas visuales, donde la dispersión estocástica uniforme logra un soporte equivalente.
     \end{itemize}
 \end{enumerate}
 
 \subsection{Perspectiva e Impacto en Ingeniería Mecatrónica}
 La reducción en los requerimientos de datos y tiempos de GPU posee una relevancia directa para el desarrollo e implantación de sistemas mecatrónicos modernos:
 \begin{itemize}
-    \item \textbf{Eficiencia Energética en Ciclos de Desarrollo}: Entrenar modelos de visión artificial con el 80\% de los datos mediante SAS reduce en más de una quinta parte el consumo eléctrico y las emisiones asociadas al uso intensivo de servidores de GPU (ahorro promedio de 50 a 63 minutos por ciclo de entrenamiento en GPU RTX A2000), optimizando sustancialmente el presupuesto operativo en prototipado rápido.
+    \item \textbf{Eficiencia Energética en Ciclos de Desarrollo}: Entrenar modelos de visión artificial con el 80\%--90\% de los datos mediante SAS reduce significativamente el consumo eléctrico y las emisiones asociadas al uso intensivo de servidores de GPU (ahorro promedio de 30 a 61 minutos por ciclo de entrenamiento en GPU RTX A2000), optimizando sustancialmente el presupuesto operativo en prototipado rápido.
     \item \textbf{Reentrenamiento Adaptativo en el Borde (\textit{Edge AI})}: En robots de servicio, vehículos autónomos guiados (AGV) y estaciones de inspección de calidad industrial, los cambios en iluminación o variaciones en los objetos requieren adaptaciones periódicas. El empleo de subconjuntos densos permite actualizar las representaciones visuales directamente en estaciones locales con hardware restringido sin comprometer la capacidad de generalización.
 \end{itemize}
 
 \subsection{Limitaciones del Estudio}
 \begin{enumerate}
-    \item \textbf{Arquitectura y Resolución}: La experimentación se centró en la arquitectura ResNet-18 y resolución espacial de $128 \times 128$ píxeles para viabilizar la ejecución controlada de más de 52 horas de cómputo en GPU sobre la estación de trabajo.
-    \item \textbf{Costo del Modelo Proxy}: El cómputo de la matriz de similitudes semánticas requiere una pasada inicial de extracción de características mediante un modelo proxy (ResNet-18 preentrenado), el cual, si bien se amortiza a lo largo de múltiples métodos SSL, representa una sobrecarga inicial no despreciable.
+    \item \textbf{Arquitectura y Resolución}: La experimentación se centró en la arquitectura ResNet-18 y resolución espacial de $128 \times 128$ píxeles para viabilizar la ejecución controlada de más de 75 horas acumuladas de preentrenamiento y evaluación lineal en GPU sobre la estación de trabajo.
+    \item \textbf{Costo del Modelo Proxy}: El cómputo de la matriz de similitudes semánticas requiere una pasada inicial de extracción de características mediante un modelo proxy (ResNet-18 preentrenado), el cual, si bien se amortiza a lo largo de múltiples métodos SSL, representa una sobrecarga inicial no despreciable (~2.5 minutos en RTX A2000).
 \end{enumerate}
 
 \subsection{Conclusiones}
 \begin{enumerate}
-    \item Los métodos \textbf{Align-Uniform} (56.61\%) y \textbf{BYOL} (55.27\%) demostraron una superioridad representacional contundente sobre Food-101, superando por más de 27 puntos porcentuales a CPC y SimSiam.
-    \item La selección inteligente mediante SAS al 80\% de retención valida plenamente la hipótesis de eficiencia: preserva el 97.0\% del desempeño en BYOL, el 95.9\% en Align-Uniform, el 99.8\% en SimSiam y mejora en $+0.85\%$ la métrica en CPC, ahorrando en promedio más del 20\% de tiempo de GPU.
-    \item En regímenes de poda moderada a profunda (60\%), SAS actúa como un estabilizador crítico contra el colapso de representación en arquitecturas siamesas simples (SimSiam), logrando una ventaja de $+2.59\%$ sobre la selección aleatoria.
+    \item Los métodos \textbf{Align-Uniform} (56.61\%) y \textbf{BYOL} (55.27\%) demostraron una superioridad representacional contundente sobre Food-101, superando por más de 27 puntos porcentuales a CPC y SimSiam en evaluación lineal.
+    \item La selección inteligente mediante SAS bajo los regímenes del 90\% y 80\% de retención valida plenamente la hipótesis de eficiencia: en BYOL, SAS supera al muestreo aleatorio en todos los niveles evaluados (54.45\% vs. 54.06\% al 90\%, 53.59\% vs. 53.49\% al 80\% y 51.54\% vs. 51.46\% al 60\%); en Align-Uniform al 90\%, SAS retiene el 98.6\% del rendimiento original (55.84\% vs. 55.51\%), reduciendo el tiempo de cómputo en aproximadamente un 10\% a 20\%.
+    \item En regímenes de compresión profunda (60\% de datos retenidos), SAS actúa como un estabilizador crítico contra el colapso de representación en arquitecturas siamesas simples (SimSiam), logrando una ventaja contundente de $+2.59\%$ Top-1 y $+3.05\%$ Top-5 sobre la selección aleatoria, e incluso rebasando al modelo completo en $+1.40\%$.
+    \item La generalización de SAS a un dominio de grano fino y alta varianza intra-clase (Food-101) confirma que la similitud de aumentaciones sobre clases latentes no supervisadas es un criterio robusto e independiente del paradigma SSL subyacente.
 \end{enumerate}

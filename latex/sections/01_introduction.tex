@@ -11,7 +11,8 @@ Sin embargo, los resultados originales de Joshi y Mirzasoleiman \cite{joshi2023s
 
 Este trabajo de investigación formaliza la evaluación de SAS sobre el conjunto de datos Food-101 \cite{bossard2014food101}, persiguiendo los siguientes objetivos específicos:
 \begin{enumerate}
-    \item Implementar el algoritmo SAS en modo puramente no supervisado y generar subconjuntos de datos con reducciones del 20\% y 40\% (80\% y 60\% de datos retenidos) sobre Food-101.
-    \item Entrenar cuatro familias representativas de modelos auto-supervisados (SimSiam, BYOL, CPC y Align-Uniform) tanto en el conjunto completo como en los subconjuntos optimizados por SAS y subconjuntos aleatorios uniformes de control.
-    \item Evaluar y comparar cuantitativamente el rendimiento downstream mediante el protocolo estándar de evaluación lineal (\textit{linear probing}), analizando la retención de precisión Top-1 / Top-5 y las ganancias en eficiencia computacional.
+    \item Implementar el algoritmo SAS en modo puramente no supervisado (basado en conglomerados latentes sin etiquetas) y generar subconjuntos de datos bajo tres regímenes de reducción controlada: 90\%, 80\% y 60\% de datos retenidos (reducciones del 10\%, 20\% y 40\%) sobre las 75\,750 imágenes de entrenamiento de Food-101.
+    \item Ejecutar una matriz experimental exhaustiva de 28 configuraciones entrenando cuatro familias representativas de modelos auto-supervisados (SimSiam, BYOL, CPC y Align-Uniform) a 200 épocas, comparando el conjunto completo (100\%) con los subconjuntos optimizados por SAS y controles de muestreo aleatorio uniforme.
+    \item Evaluar y comparar cuantitativamente el rendimiento downstream mediante el protocolo estándar de evaluación lineal (\textit{linear probing}) a 100 épocas, analizando la retención de precisión Top-1 / Top-5, las curvas de aprendizaje y la frontera de compromiso entre exactitud y costo computacional en GPU.
 \end{enumerate}
+
