@@ -17,7 +17,7 @@ import torch
 from torch.utils.data import DataLoader, Subset
 
 from config_final import get_config
-from data_utils import load_food101, get_ssl_augmentation, TwoViewDataset
+from data_utils import load_dataset, get_ssl_augmentation, TwoViewDataset
 from ssl_models import build_ssl_model
 from ssl_losses import simsiam_loss, byol_loss, cpc_loss, align_uniform_loss
 
@@ -99,21 +99,27 @@ def training_step(method, model, batch, device):
     raise ValueError(f"Metodo no valido: {method}")
 
 
-def train(method, data_config, mode="full", use_dummy=False):
-    cfg = get_config(mode)
+def train(method, data_config, mode="full", use_dummy=False, dataset_name="food101"):
+    cfg = get_config(mode, dataset=dataset_name)
     print(f"Configuracion: {cfg}")
-    print(f"Metodo: {method} | Datos: {data_config} | Modo: {mode} | Device: {cfg.device}")
+    print(f"Dataset: {cfg.dataset_name} | Metodo: {method} | Datos: {data_config} | Modo: {mode} | Device: {cfg.device}")
 
     if use_dummy:
         from data_utils import generar_dataset_dummy
         dataset = generar_dataset_dummy(cfg)
     else:
-        dataset = load_food101(cfg, split="train")
+        dataset = load_dataset(cfg, split="train")
 
     indices = load_indices(cfg, data_config)
+    if cfg.mode == "debug":
+        if indices is None:
+            n_debug = min(64, max(1, int(len(dataset) * cfg.debug_fraction)))
+            indices = np.arange(n_debug)
+        else:
+            indices = indices[:min(64, len(indices))]
     base = Subset(dataset, indices.tolist()) if indices is not None else dataset
     n_used = len(base)
-    print(f"Dataset: {len(dataset)} | Muestras utilizadas: {n_used}")
+    print(f"Dataset total: {len(dataset)} | Muestras utilizadas: {n_used}")
 
     transform = get_ssl_augmentation(cfg.image_size)
     wrapped = CPCDataset(base, transform) if method == "cpc" else TwoViewDataset(base, transform)
@@ -170,6 +176,8 @@ def train(method, data_config, mode="full", use_dummy=False):
     torch.save({
         "method": method,
         "data_config": data_config,
+        "dataset": cfg.dataset_name,
+        "cifar_variant": getattr(cfg, "cifar_variant", False),
         "backbone_state_dict": get_backbone_state_dict(model, method),
         "full_model_state_dict": model.state_dict(),
         "history": history,
@@ -186,10 +194,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--method", choices=["simsiam", "byol", "cpc", "align_uniform"], required=True)
     parser.add_argument("--data_config", required=True)
+    parser.add_argument("--dataset", choices=["food101", "cifar100"], default="food101")
     parser.add_argument("--mode", choices=["debug", "full"], default="full")
     parser.add_argument("--use_dummy", action="store_true")
     args = parser.parse_args()
-    train(args.method, args.data_config, mode=args.mode, use_dummy=args.use_dummy)
+    train(args.method, args.data_config, mode=args.mode, use_dummy=args.use_dummy, dataset_name=args.dataset)
 
 
 if __name__ == "__main__":

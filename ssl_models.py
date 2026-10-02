@@ -48,21 +48,29 @@ import copy
 # 1. Backbone compartido (igual para los 4 metodos, para comparacion justa)
 # ----------------------------------------------------------------------------
 
-def build_shared_backbone(name="resnet18", pretrained=False):
+def build_shared_backbone(name="resnet18", pretrained=False, cifar_variant=False):
     """
     Construye el backbone (ResNet sin capa de clasificacion) que usaran los
     4 metodos SSL. pretrained=False por defecto: en SSL normalmente se
     entrena el backbone DESDE CERO (a diferencia del proxy_model.py, que
     SI usa pesos preentrenados porque solo necesita similitud aproximada).
+    cifar_variant=True adapta ResNet para imagenes pequenas (32x32) como CIFAR-100:
+    reemplaza conv1 7x7 stride 2 por 3x3 stride 1 y elimina maxpool.
 
     Returns:
         (backbone, embedding_dim)
     """
     if name == "resnet18":
         net = models.resnet18(weights=None if not pretrained else models.ResNet18_Weights.IMAGENET1K_V1)
+        if cifar_variant:
+            net.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+            net.maxpool = nn.Identity()
         embedding_dim = 512
     elif name == "resnet50":
         net = models.resnet50(weights=None if not pretrained else models.ResNet50_Weights.IMAGENET1K_V2)
+        if cifar_variant:
+            net.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+            net.maxpool = nn.Identity()
         embedding_dim = 2048
     else:
         raise ValueError(f"Backbone '{name}' no soportado.")
@@ -127,9 +135,9 @@ class SimSiam(nn.Module):
     NO usa red target, NO usa pares negativos. El stop-gradient se aplica
     en la funcion de perdida (ssl_losses.py), no en el modelo.
     """
-    def __init__(self, backbone_name, hidden_dim, output_dim):
+    def __init__(self, backbone_name, hidden_dim, output_dim, cifar_variant=False):
         super().__init__()
-        self.backbone, embedding_dim = build_shared_backbone(backbone_name, pretrained=False)
+        self.backbone, embedding_dim = build_shared_backbone(backbone_name, pretrained=False, cifar_variant=cifar_variant)
         self.projector = ProjectionMLP(embedding_dim, hidden_dim, output_dim, num_layers=3)
         self.predictor = PredictionMLP(output_dim, hidden_dim // 4)
 
@@ -159,12 +167,12 @@ class BYOL(nn.Module):
     gradiente directo). El predictor SOLO existe en la rama online (BYOL
     Sec. 3.1, Figura 2: "this predictor is only applied to the online branch").
     """
-    def __init__(self, backbone_name, hidden_dim, output_dim, ema_tau=0.99):
+    def __init__(self, backbone_name, hidden_dim, output_dim, ema_tau=0.99, cifar_variant=False):
         super().__init__()
         self.ema_tau = ema_tau
 
         # Red online (se entrena por gradiente)
-        self.online_backbone, embedding_dim = build_shared_backbone(backbone_name, pretrained=False)
+        self.online_backbone, embedding_dim = build_shared_backbone(backbone_name, pretrained=False, cifar_variant=cifar_variant)
         self.online_projector = ProjectionMLP(embedding_dim, hidden_dim, output_dim, num_layers=2)
         self.predictor = PredictionMLP(output_dim, hidden_dim // 4)
 
@@ -222,9 +230,9 @@ class PatchEncoder(nn.Module):
     original, adaptado): la imagen se divide en una grilla de parches, y cada
     parche se codifica INDEPENDIENTEMENTE con el mismo backbone.
     """
-    def __init__(self, backbone_name, embedding_dim_out):
+    def __init__(self, backbone_name, embedding_dim_out, cifar_variant=False):
         super().__init__()
-        self.backbone, embedding_dim = build_shared_backbone(backbone_name, pretrained=False)
+        self.backbone, embedding_dim = build_shared_backbone(backbone_name, pretrained=False, cifar_variant=cifar_variant)
         self.proj = nn.Linear(embedding_dim, embedding_dim_out)
 
     def forward(self, patches):
@@ -250,9 +258,9 @@ class CPC(nn.Module):
     (via una transformacion lineal W_k, log-bilinear, ver Ec. 3 del paper CPC)
     las representaciones de las filas inferiores.
     """
-    def __init__(self, backbone_name, embedding_dim_out, context_dim, n_future_steps=2):
+    def __init__(self, backbone_name, embedding_dim_out, context_dim, n_future_steps=2, cifar_variant=False):
         super().__init__()
-        self.encoder = PatchEncoder(backbone_name, embedding_dim_out)
+        self.encoder = PatchEncoder(backbone_name, embedding_dim_out, cifar_variant=cifar_variant)
         self.gru = nn.GRU(input_size=embedding_dim_out, hidden_size=context_dim, batch_first=True)
         self.n_future_steps = n_future_steps
         # Una transformacion lineal W_k por cada paso futuro k (CPC Ec. 3: f_k = exp(z^T W_k c))
@@ -289,9 +297,9 @@ class AlignUniformModel(nn.Module):
     del encoder). La diferencia con SimCLR/CPC esta en la funcion de PERDIDA
     (ssl_losses.py: L_align + L_uniform en vez de InfoNCE), no en la arquitectura.
     """
-    def __init__(self, backbone_name, hidden_dim, output_dim):
+    def __init__(self, backbone_name, hidden_dim, output_dim, cifar_variant=False):
         super().__init__()
-        self.backbone, embedding_dim = build_shared_backbone(backbone_name, pretrained=False)
+        self.backbone, embedding_dim = build_shared_backbone(backbone_name, pretrained=False, cifar_variant=cifar_variant)
         self.projector = ProjectionMLP(embedding_dim, hidden_dim, output_dim, num_layers=2)
 
     def forward(self, x1, x2):
@@ -307,16 +315,17 @@ class AlignUniformModel(nn.Module):
 def build_ssl_model(method_name, cfg):
     """
     Instancia el modelo SSL correspondiente segun el nombre del metodo,
-    usando las dimensiones definidas en config.py.
+    usando las dimensiones definidas en config.py / config_final.py.
     """
+    cifar_variant = getattr(cfg, "cifar_variant", False)
     if method_name == "simsiam":
-        return SimSiam(cfg.backbone, cfg.projector_hidden_dim, cfg.projector_output_dim)
+        return SimSiam(cfg.backbone, cfg.projector_hidden_dim, cfg.projector_output_dim, cifar_variant=cifar_variant)
     elif method_name == "byol":
-        return BYOL(cfg.backbone, cfg.projector_hidden_dim, cfg.projector_output_dim, ema_tau=0.99)
+        return BYOL(cfg.backbone, cfg.projector_hidden_dim, cfg.projector_output_dim, ema_tau=0.99, cifar_variant=cifar_variant)
     elif method_name == "cpc":
-        return CPC(cfg.backbone, cfg.projector_output_dim, context_dim=cfg.projector_hidden_dim)
+        return CPC(cfg.backbone, cfg.projector_output_dim, context_dim=cfg.projector_hidden_dim, cifar_variant=cifar_variant)
     elif method_name == "align_uniform":
-        return AlignUniformModel(cfg.backbone, cfg.projector_hidden_dim, cfg.projector_output_dim)
+        return AlignUniformModel(cfg.backbone, cfg.projector_hidden_dim, cfg.projector_output_dim, cifar_variant=cifar_variant)
     else:
         raise ValueError(f"Metodo SSL '{method_name}' no reconocido. "
                           f"Opciones: simsiam, byol, cpc, align_uniform")

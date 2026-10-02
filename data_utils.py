@@ -50,6 +50,23 @@ def load_food101(cfg, split="train"):
         dataset = Subset(dataset, indices)
     return dataset
 
+def load_cifar100(cfg, split="train"):
+    is_train = (split == "train")
+    dataset = torchvision.datasets.CIFAR100(root=cfg.data_root, train=is_train, download=True)
+    if cfg.mode == "debug" and cfg.debug_fraction < 1.0:
+        n_total = len(dataset)
+        n_keep = max(1, int(n_total * cfg.debug_fraction))
+        step = max(1, n_total // n_keep)
+        indices = list(range(0, n_total, step))[:n_keep]
+        dataset = Subset(dataset, indices)
+    return dataset
+
+def load_dataset(cfg, split="train"):
+    if getattr(cfg, "dataset_name", "food101") == "cifar100":
+        return load_cifar100(cfg, split=split)
+    return load_food101(cfg, split=split)
+
+
 class DummyImageDataset(Dataset):
     def __init__(self, n_samples=500, n_classes=10, image_size=128, seed=0):
         rng = np.random.default_rng(seed)

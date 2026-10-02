@@ -5,23 +5,34 @@ import torch
 
 
 class Config:
-    def __init__(self, mode="full"):
+    def __init__(self, mode="full", dataset="food101"):
         assert mode in ("debug", "full")
+        assert dataset in ("food101", "cifar100")
         self.mode = mode
+        self.dataset_name = dataset
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.data_root = "./data"
         self.output_root = "./output"
-        self.checkpoint_dir = os.path.join(self.output_root, "checkpoints_final")
-        self.subset_dir = os.path.join(self.output_root, "subsets")
-        self.results_dir = os.path.join(self.output_root, "results_final")
+
+        if dataset == "cifar100":
+            self.num_classes = 100
+            self.image_size = 32
+            self.cifar_variant = True
+            self.checkpoint_dir = os.path.join(self.output_root, "checkpoints_cifar100")
+            self.subset_dir = os.path.join(self.output_root, "subsets_cifar100")
+            self.results_dir = os.path.join(self.output_root, "results_cifar100")
+        else:
+            self.num_classes = 101
+            self.image_size = 128
+            self.cifar_variant = False
+            self.checkpoint_dir = os.path.join(self.output_root, "checkpoints_final")
+            self.subset_dir = os.path.join(self.output_root, "subsets")
+            self.results_dir = os.path.join(self.output_root, "results_final")
+
         for directory in [self.data_root, self.output_root, self.checkpoint_dir,
                           self.subset_dir, self.results_dir]:
             os.makedirs(directory, exist_ok=True)
-
-        self.dataset_name = "food101"
-        self.num_classes = 101
-        self.image_size = 128
 
         if mode == "debug":
             self.debug_fraction = 0.02
@@ -61,5 +72,5 @@ class Config:
         return f"<Config mode={self.mode} device={self.device} dataset={self.dataset_name}>"
 
 
-def get_config(mode="full"):
-    return Config(mode=mode)
+def get_config(mode="full", dataset="food101"):
+    return Config(mode=mode, dataset=dataset)

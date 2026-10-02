@@ -23,7 +23,7 @@ from torch.utils.data import DataLoader
 
 from config_final import get_config
 from data_utils import (
-    load_food101,
+    load_dataset,
     generar_dataset_dummy,
     get_linear_train_transform,
     get_eval_transform,
@@ -69,13 +69,14 @@ def accuracy(output, target, topk=(1, 5)):
     return res
 
 
-def load_backbone_from_checkpoint(checkpoint_path, backbone_name="resnet18", device="cpu"):
+def load_backbone_from_checkpoint(checkpoint_path, backbone_name="resnet18", device="cpu", cifar_variant=False):
     """Carga los pesos del backbone desde un checkpoint SSL."""
     if not os.path.exists(checkpoint_path):
         raise FileNotFoundError(f"Checkpoint no encontrado: {checkpoint_path}")
 
     checkpoint = torch.load(checkpoint_path, map_location=device)
-    backbone, embedding_dim = build_shared_backbone(backbone_name, pretrained=False)
+    ckpt_cifar = checkpoint.get("cifar_variant", cifar_variant) if isinstance(checkpoint, dict) else cifar_variant
+    backbone, embedding_dim = build_shared_backbone(backbone_name, pretrained=False, cifar_variant=ckpt_cifar)
 
     if "backbone_state_dict" in checkpoint:
         state_dict = checkpoint["backbone_state_dict"]
@@ -140,7 +141,7 @@ def train_linear_eval(cfg, checkpoint_path, epochs=None, lr=0.1, optimizer_name=
     epochs = epochs or cfg.epochs_linear_eval
     device = cfg.device
     print(f"\n{'='*75}")
-    print(f"EVALUACION LINEAL: {os.path.basename(checkpoint_path)}")
+    print(f"EVALUACION LINEAL: {os.path.basename(checkpoint_path)} | Dataset: {cfg.dataset_name}")
     print(f"Dispositivo: {device} | Epocas: {epochs} | Batch size: {cfg.batch_size} | Opt: {optimizer_name} (lr={lr})")
     print(f"{'='*75}")
 
@@ -150,9 +151,14 @@ def train_linear_eval(cfg, checkpoint_path, epochs=None, lr=0.1, optimizer_name=
         train_dataset = generar_dataset_dummy(cfg)
         test_dataset = generar_dataset_dummy(cfg)
     else:
-        print("Cargando Food-101 train y test...")
-        train_dataset = load_food101(cfg, split="train")
-        test_dataset = load_food101(cfg, split="test")
+        print(f"Cargando {cfg.dataset_name} train y test...")
+        train_dataset = load_dataset(cfg, split="train")
+        test_dataset = load_dataset(cfg, split="test")
+
+    if cfg.mode == "debug":
+        from torch.utils.data import Subset
+        train_dataset = Subset(train_dataset, list(range(min(64, len(train_dataset)))))
+        test_dataset = Subset(test_dataset, list(range(min(64, len(test_dataset)))))
 
     train_transform = get_linear_train_transform(cfg.image_size)
     test_transform = get_eval_transform(cfg.image_size)
@@ -179,7 +185,8 @@ def train_linear_eval(cfg, checkpoint_path, epochs=None, lr=0.1, optimizer_name=
 
     # 2. Cargar Backbone y construir LinearClassifier
     backbone, emb_dim, ckpt_meta = load_backbone_from_checkpoint(
-        checkpoint_path, backbone_name=cfg.backbone, device=device
+        checkpoint_path, backbone_name=cfg.backbone, device=device,
+        cifar_variant=getattr(cfg, "cifar_variant", False)
     )
     model = LinearClassifier(backbone, embedding_dim=emb_dim, num_classes=cfg.num_classes).to(device)
 
@@ -297,8 +304,9 @@ def train_linear_eval(cfg, checkpoint_path, epochs=None, lr=0.1, optimizer_name=
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Evaluacion lineal para modelos SSL en Food-101")
+    parser = argparse.ArgumentParser(description="Evaluacion lineal para modelos SSL")
     parser.add_argument("--mode", choices=["debug", "full"], default="full")
+    parser.add_argument("--dataset", choices=["food101", "cifar100"], default="food101")
     parser.add_argument("--checkpoint", type=str, default=None, help="Ruta al checkpoint .pt")
     parser.add_argument("--checkpoint_dir", type=str, default=None, help="Directorio de checkpoints")
     parser.add_argument("--method", choices=["simsiam", "byol", "cpc", "align_uniform"], default=None)
@@ -310,7 +318,7 @@ def main():
     parser.add_argument("--use_dummy", action="store_true", help="Usar dataset dummy para pruebas rapidas")
     args = parser.parse_args()
 
-    cfg = get_config(args.mode)
+    cfg = get_config(args.mode, dataset=args.dataset)
     ckpt_dir = args.checkpoint_dir or cfg.checkpoint_dir
     # Si ckpt_dir no tiene archivos .pt, intentar con output/checkpoints
     if not glob.glob(os.path.join(ckpt_dir, "*.pt")):

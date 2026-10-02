@@ -22,7 +22,7 @@ import time
 import numpy as np
 
 from config_final import get_config
-from data_utils import load_food101, generar_dataset_dummy, get_eval_transform
+from data_utils import load_dataset, generar_dataset_dummy, get_eval_transform
 from proxy_model import ProxyModel, compute_embeddings
 from sas_selection_fast import (
     approximate_latent_classes,
@@ -35,23 +35,24 @@ from sas_selection_fast import (
 def main():
     parser = argparse.ArgumentParser(description="Generador acelerado de subconjuntos SAS y baselines")
     parser.add_argument("--mode", choices=["debug", "full"], default="debug")
+    parser.add_argument("--dataset", choices=["food101", "cifar100"], default="food101")
     parser.add_argument("--use_dummy", action="store_true", help="Usar dataset sintetico para pruebas")
     parser.add_argument("--selection_mode", choices=["unsupervised", "oracle", "both"], default="unsupervised",
                         help="Modo de seleccion: 'unsupervised' (K-Means, sin etiquetas), 'oracle' o 'both'")
-    parser.add_argument("--n_clusters", type=int, default=101, help="Numero de clusters latentes para K-Means")
+    parser.add_argument("--n_clusters", type=int, default=None, help="Numero de clusters latentes para K-Means (por defecto num_classes)")
     parser.add_argument("--force_recompute_embeddings", action="store_true")
     parser.add_argument("--proxy_checkpoint", type=str, default=None,
                         help="Ruta opcional a checkpoint SSL para usar como proxy")
     parser.add_argument("--refine", action="store_true", help="Activar refinamiento por swaps (mas lento)")
     args = parser.parse_args()
 
-    cfg = get_config(args.mode)
+    cfg = get_config(args.mode, dataset=args.dataset)
     print(f"\n{'='*75}")
     print(f"GENERACION DE SUBCONJUNTOS SAS")
-    print(f"Modo: {cfg.mode} | Seleccion: {args.selection_mode} | Dispositivo: {cfg.device}")
+    print(f"Dataset: {cfg.dataset_name} | Modo: {cfg.mode} | Seleccion: {args.selection_mode} | Dispositivo: {cfg.device}")
     print(f"{'='*75}")
 
-    dataset = generar_dataset_dummy(cfg) if args.use_dummy else load_food101(cfg, split="train")
+    dataset = generar_dataset_dummy(cfg) if args.use_dummy else load_dataset(cfg, split="train")
     n_samples = len(dataset)
     print(f"Dataset cargado: {n_samples} muestras")
 
@@ -82,7 +83,9 @@ def main():
     # 2. Si se requiere modo no supervisado, calcular clases latentes K-Means una sola vez
     latent_labels = None
     if args.selection_mode in ("unsupervised", "both"):
-        n_clusters = min(args.n_clusters, n_samples)
+        default_clusters = cfg.num_classes
+        n_clusters = args.n_clusters if args.n_clusters is not None else default_clusters
+        n_clusters = min(n_clusters, n_samples)
         latent_labels_path = os.path.join(cfg.subset_dir, f"latent_clusters_k{n_clusters}_{cfg.mode}.npy")
         if os.path.exists(latent_labels_path) and not args.force_recompute_embeddings:
             print(f"Cargando clusters latentes K-Means existentes desde {latent_labels_path} ...")
