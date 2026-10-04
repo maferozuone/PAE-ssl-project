@@ -1,19 +1,30 @@
 \section{Montaje Experimental}
 \label{sec:setup}
 
-\subsection{Conjunto de Datos y Preprocesamiento}
-Se utiliza el conjunto de datos Food-101 \cite{bossard2014food101}, compuesto por 101 clases de alimentos con un total de 101\,000 imágenes (75\,750 para entrenamiento y 25\,250 para prueba oficial). Para el preentrenamiento auto-supervisado, las imágenes se reescalan a $128 \times 128$ píxeles para optimizar el rendimiento computacional. El aumento de datos incluye:
+\subsection{Conjuntos de Datos y Preprocesamiento}
+La experimentación se articula sobre un esquema de validación de doble dominio que abarca dos conjuntos de datos con características morfológicas y semánticas diametralmente opuestas:
+\begin{enumerate}
+    \item \textbf{CIFAR-100 (Benchmark Canónico de la Literatura)} \cite{krizhevsky2009cifar}: Compuesto por 60\,000 imágenes en color de baja resolución ($32 \times 32$ píxeles), particionadas en 50\,000 imágenes para entrenamiento y 10\,000 para evaluación, distribuidas uniformemente en 100 clases genéricas agrupadas en 20 superclases. Este conjunto constituye la referencia estándar empleada en los estudios de Joshi y Mirzasoleiman \cite{joshi2023sas}, Wang e Isola \cite{wang2020alignuniform} y Chen y He \cite{chen2021simsiam}, permitiendo calibrar la paridad de nuestras implementaciones frente a los registros de la literatura.
+    \item \textbf{Food-101 (Nuevo Dominio Visual de Granularidad Fina)} \cite{bossard2014food101}: Compuesto por 101 clases de preparaciones gastronómicas con un total de 101\,000 imágenes (75\,750 para entrenamiento y 25\,250 para prueba oficial). Representa un dominio desafiante caracterizado por límites de clase difusos, alta variabilidad intra-clase (texturas, emplatados, iluminación) y baja distancia inter-clase, reescalado a $128 \times 128$ píxeles para balancear resolución espacial y viabilidad computacional.
+\end{enumerate}
+
+El aumento de datos para preentrenamiento auto-supervisado sigue el protocolo estándar de SimCLR/BYOL:
 \begin{itemize}
-    \item Recorte aleatorio redimensionado (\textit{RandomResizedCrop}, escala $[0.2, 1.0]$).
+    \item Recorte aleatorio redimensionado (\textit{RandomResizedCrop}, escala $[0.2, 1.0]$ ajustada al tamaño de entrada).
     \item Volteo horizontal aleatorio ($p = 0.5$).
     \item Distorsión cromática (\textit{ColorJitter}: brillo 0.4, contraste 0.4, saturación 0.4, tono 0.1 con $p = 0.8$).
     \item Conversión a escala de grises aleatoria ($p = 0.2$).
     \item Desenfoque Gaussiano aleatorio ($\sigma \in [0.1, 2.0]$, $p = 0.5$).
-    \item Normalización con la media y desviación estándar de ImageNet.
+    \item Normalización estándar por canal con media y varianza del conjunto respectivo.
 \end{itemize}
 
+\subsection{Adaptación Arquitectónica para Imágenes de Baja Resolución}
+Para el conjunto Food-101 ($128 \times 128$), se emplea la red troncal ResNet-18 estándar (con primera capa convolucional de kernel $7 \times 7$, paso 2, y capa de agrupamiento máximo \textit{MaxPool}). 
+
+No obstante, en CIFAR-100 ($32 \times 32$), el uso directo de un kernel de $7 \times 7$ con paso 2 seguido de MaxPool reduciría la resolución espacial a apenas $8 \times 8$ en la primera etapa, perdiendo irreversiblemente la información geométrica. Siguiendo el estándar universal de la literatura SSL en CIFAR (He et al. \cite{he2016deep}, Chen et al. \cite{chen2020simclr}), se implementa la variante especializada para CIFAR: la primera convolución se sustituye por un kernel de $3 \times 3$, paso 1 y relleno 1 (\texttt{stride=1, padding=1}), y la capa de agrupamiento máximo se sustituye por la identidad (\texttt{maxpool = nn.Identity()}), preservando la cuadrícula espacial intacta hasta las capas residuales intermedias y garantizando que el vector de embedding final converja limpiamente a dimensión 512.
+
 \subsection{Plataforma de Cómputo y Entorno Experimental}
-Para garantizar la reproducibilidad y la estricta comparabilidad de los tiempos de cómputo y consumo de recursos, todos los 28 experimentos de preentrenamiento SSL y evaluación lineal se ejecutaron de manera homogénea y secuencial sobre una estación de trabajo dedicada equipada con:
+Para garantizar la reproducibilidad y la estricta comparabilidad de los tiempos de cómputo y consumo de recursos, todos los experimentos de preentrenamiento SSL y evaluación lineal se ejecutaron de manera homogénea y secuencial sobre una estación de trabajo dedicada equipada con:
 \begin{itemize}
     \item \textbf{GPU}: NVIDIA RTX A2000 (12\,GB VRAM GDDR6 con ECC, arquitectura Ampere, 3328 núcleos CUDA y 104 núcleos Tensor).
     \item \textbf{Almacenamiento y Sistema}: Unidad de estado sólido NVMe PCIe de 1\,TB y entorno controlado con PyTorch 2.13, CUDA 12 y precisión mixta automática (\texttt{torch.amp}).
