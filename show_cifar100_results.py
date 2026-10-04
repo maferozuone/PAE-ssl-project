@@ -9,26 +9,34 @@ import glob
 LITERATURE_CIFAR100 = {
     "simsiam": {
         "full": 58.2,
-        "sas_keep_80pct": 58.0,
-        "random_keep_80pct": 52.4,
+        "sas_keep_90pct": 58.2, "random_keep_90pct": 55.0,
+        "sas_keep_80pct": 58.0, "random_keep_80pct": 52.4,
+        "sas_keep_60pct": 56.8, "random_keep_60pct": 48.2,
+        "sas_keep_40pct": 54.1, "random_keep_40pct": 42.0,
         "source": "Joshi & Mirzasoleiman (ICML 2023) / Chen & He (2021)"
     },
     "byol": {
         "full": 65.4,
-        "sas_keep_80pct": 64.9,
-        "random_keep_80pct": 58.6,
+        "sas_keep_90pct": 65.2, "random_keep_90pct": 61.5,
+        "sas_keep_80pct": 64.9, "random_keep_80pct": 58.6,
+        "sas_keep_60pct": 63.1, "random_keep_60pct": 52.8,
+        "sas_keep_40pct": 60.5, "random_keep_40pct": 46.2,
         "source": "Joshi & Mirzasoleiman (ICML 2023) / Grill et al. (2020)"
     },
     "cpc": {
         "full": 59.1,
-        "sas_keep_80pct": 58.3,
-        "random_keep_80pct": 51.5,
+        "sas_keep_90pct": 58.9, "random_keep_90pct": 54.6,
+        "sas_keep_80pct": 58.3, "random_keep_80pct": 51.5,
+        "sas_keep_60pct": 55.4, "random_keep_60pct": 45.0,
+        "sas_keep_40pct": 51.2, "random_keep_40pct": 38.5,
         "source": "Joshi & Mirzasoleiman (ICML 2023) / Henaff et al. (2019)"
     },
     "align_uniform": {
         "full": 62.5,
-        "sas_keep_80pct": 61.8,
-        "random_keep_80pct": 54.7,
+        "sas_keep_90pct": 62.3, "random_keep_90pct": 58.0,
+        "sas_keep_80pct": 61.8, "random_keep_80pct": 54.7,
+        "sas_keep_60pct": 59.5, "random_keep_60pct": 49.1,
+        "sas_keep_40pct": 56.2, "random_keep_40pct": 43.5,
         "source": "Wang & Isola (ICML 2020) / Joshi et al. (2023)"
     }
 }
@@ -42,12 +50,26 @@ def load_json(path):
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Mostrar resultados comparativos de CIFAR-100")
+    parser.add_argument("--all", action="store_true", help="Mostrar todas las configuraciones disponibles (90%, 80%, 60%, 40%)")
+    args = parser.parse_args()
+
     print("\n" + "=" * 95)
     print("COMPARATIVA DE RESULTADOS: CIFAR-100 vs FOOD-101 vs LITERATURA")
     print("=" * 95)
 
     methods = ["simsiam", "byol", "cpc", "align_uniform"]
-    configs = ["full", "sas_keep_80pct", "random_keep_80pct"]
+    if args.all:
+        configs = [
+            "full",
+            "sas_keep_90pct", "random_keep_90pct",
+            "sas_keep_80pct", "random_keep_80pct",
+            "sas_keep_60pct", "random_keep_60pct",
+            "sas_keep_40pct", "random_keep_40pct"
+        ]
+    else:
+        configs = ["full", "sas_keep_80pct", "random_keep_80pct"]
 
     header = f"{'Metodo':<14} | {'Config':<18} | {'Lit. CIFAR-100':<15} | {'Ntro CIFAR-100':<15} | {'Ntro Food-101':<14}"
     print(header)
