@@ -50,12 +50,16 @@ class Config:
             self.epochs_ssl = 200
             self.epochs_linear_eval = 100
             self.batch_size = 128
-            self.num_workers = 6
             self.backbone = "resnet18"
             self.proxy_backbone = "resnet18"
             self.log_every = 20
             self.use_amp = True
-            self.prefetch_factor = 2
+            if self.dataset_name == "cifar100":
+                self.num_workers = 2
+                self.prefetch_factor = None
+            else:
+                self.num_workers = 6
+                self.prefetch_factor = 2
 
         self.learning_rate = 3e-4
         self.weight_decay = 1e-6

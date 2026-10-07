@@ -99,10 +99,12 @@ def training_step(method, model, batch, device):
     raise ValueError(f"Metodo no valido: {method}")
 
 
-def train(method, data_config, mode="full", use_dummy=False, dataset_name="food101"):
+def train(method, data_config, mode="full", use_dummy=False, dataset_name="food101", num_workers=None):
     cfg = get_config(mode, dataset=dataset_name)
+    if num_workers is not None:
+        cfg.num_workers = num_workers
     print(f"Configuracion: {cfg}")
-    print(f"Dataset: {cfg.dataset_name} | Metodo: {method} | Datos: {data_config} | Modo: {mode} | Device: {cfg.device}")
+    print(f"Dataset: {cfg.dataset_name} | Metodo: {method} | Datos: {data_config} | Modo: {mode} | Device: {cfg.device} | Workers: {cfg.num_workers}")
 
     if use_dummy:
         from data_utils import generar_dataset_dummy
@@ -196,9 +198,10 @@ def main():
     parser.add_argument("--data_config", required=True)
     parser.add_argument("--dataset", choices=["food101", "cifar100"], default="food101")
     parser.add_argument("--mode", choices=["debug", "full"], default="full")
+    parser.add_argument("--num_workers", type=int, default=None, help="Numero de workers del DataLoader")
     parser.add_argument("--use_dummy", action="store_true")
     args = parser.parse_args()
-    train(args.method, args.data_config, mode=args.mode, use_dummy=args.use_dummy, dataset_name=args.dataset)
+    train(args.method, args.data_config, mode=args.mode, use_dummy=args.use_dummy, dataset_name=args.dataset, num_workers=args.num_workers)
 
 
 if __name__ == "__main__":

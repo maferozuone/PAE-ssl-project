@@ -99,6 +99,8 @@ def main():
                         help="Ejecutar la matriz completa (Full + 90%% + 80%% + 60%% + 40%%)")
     parser.add_argument("--mode", choices=["debug", "full"], default="full",
                         help="Modo de ejecucion")
+    parser.add_argument("--num_workers", type=int, default=2,
+                        help="Numero de workers del DataLoader (por defecto 2 para evitar errores IPC en Windows)")
     parser.add_argument("--force_retrain", action="store_true",
                         help="Forzar reentrenamiento aunque el checkpoint o evaluacion ya existan")
     args = parser.parse_args()
@@ -153,6 +155,7 @@ def main():
                     "--data_config", d_cfg,
                     "--dataset", "cifar100",
                     "--mode", args.mode,
+                    "--num_workers", str(args.num_workers),
                 ]
                 run_command(cmd_train, f"SSL Pretraining: {method} ({d_cfg}) en CIFAR-100")
             else:
