@@ -238,16 +238,77 @@ def plot_figure_4_retention_bars(data):
     plt.close(fig)
     print("-> Guardada Figura 4: fig4_relative_retention")
 
-def main():
-    print("Cargando resultados experimentales...")
-    data = load_data()
-    print(f"Cargadas {len(data)} combinaciones (metodo, configuracion).")
+def plot_figure_5_dual_dataset_curves(food_data, cifar_data):
+    """Figura 5: Curvas de retencion comparativas Doble Dominio (CIFAR-100 vs Food-101)."""
+    fig, axes = plt.subplots(2, 2, figsize=(8.0, 6.0), sharex=True)
+    axes = axes.flatten()
 
-    plot_figure_1_retention_curves(data)
-    plot_figure_2_efficiency_tradeoff(data)
-    plot_figure_3_convergence(data)
-    plot_figure_4_retention_bars(data)
-    print("\n[OK] Todas las figuras generadas exitosamente en 'latex/figures/'.")
+    cifar_pcts = [40, 60, 80, 90]
+    food_pcts = [60, 80, 90]
+
+    for idx, (m_key, m_name, color) in enumerate(METHODS):
+        ax = axes[idx]
+
+        # CIFAR-100
+        cifar_full = cifar_data[(m_key, "full")]["best_top1"]
+        cifar_sas = [cifar_data[(m_key, f"sas_keep_{p}pct")]["best_top1"] for p in cifar_pcts] + [cifar_full]
+        cifar_rand = [cifar_data[(m_key, f"random_keep_{p}pct")]["best_top1"] for p in cifar_pcts] + [cifar_full]
+        cifar_x = cifar_pcts + [100]
+
+        # Food-101
+        food_full = food_data[(m_key, "full")]["best_top1"]
+        food_sas = [food_data[(m_key, f"sas_keep_{p}pct")]["best_top1"] for p in food_pcts] + [food_full]
+        food_rand = [food_data[(m_key, f"random_keep_{p}pct")]["best_top1"] for p in food_pcts] + [food_full]
+        food_x = food_pcts + [100]
+
+        # Trazo CIFAR-100
+        ax.plot(cifar_x, cifar_sas, marker="o", color="#1f77b4", label="CIFAR-100 (SAS)", linewidth=1.8, markersize=5)
+        ax.plot(cifar_x, cifar_rand, marker="s", linestyle="--", color="#4ba3e3", label="CIFAR-100 (Aleatorio)", linewidth=1.4, markersize=4.5)
+        ax.axhline(cifar_full, color="#1f77b4", linestyle=":", alpha=0.6, label="CIFAR-100 (100% Completo)")
+
+        # Trazo Food-101
+        ax.plot(food_x, food_sas, marker="^", color="#2ca02c", label="Food-101 (SAS)", linewidth=1.8, markersize=5)
+        ax.plot(food_x, food_rand, marker="d", linestyle="--", color="#74c476", label="Food-101 (Aleatorio)", linewidth=1.4, markersize=4.5)
+        ax.axhline(food_full, color="#2ca02c", linestyle=":", alpha=0.6, label="Food-101 (100% Completo)")
+
+        ax.set_title(f"{m_name}", fontweight="bold", fontsize=10)
+        ax.set_ylabel("Top-1 Accuracy (%)", fontsize=8.5)
+        if idx in [2, 3]:
+            ax.set_xlabel("Datos de Entrenamiento Conservados (%)", fontsize=8.5)
+        ax.set_xticks([40, 60, 80, 90, 100])
+        ax.grid(True, linestyle="--", alpha=0.35)
+
+        if idx == 0:
+            ax.legend(framealpha=0.88, fontsize=7, loc="lower right")
+
+    plt.tight_layout()
+    for ext in ["pdf", "png"]:
+        fig.savefig(os.path.join(FIG_DIR, f"fig5_dual_dataset_curves.{ext}"), bbox_inches="tight")
+    plt.close(fig)
+    print("-> Guardada Figura 5: fig5_dual_dataset_curves")
+
+def load_dataset_results(results_dir):
+    data = {}
+    for f in glob.glob(os.path.join(results_dir, "eval_*.json")):
+        with open(f, encoding="utf-8") as fp:
+            d = json.load(fp)
+        m = d.get("method")
+        c = d.get("data_config")
+        data[(m, c)] = d
+    return data
+
+def main():
+    print("Cargando resultados de Food-101 y CIFAR-100...")
+    food_data = load_dataset_results(RESULTS_DIR)
+    cifar_data = load_dataset_results("output/results_cifar100")
+    print(f"Cargadas {len(food_data)} combinaciones Food-101 y {len(cifar_data)} combinaciones CIFAR-100.")
+
+    plot_figure_1_retention_curves(food_data)
+    plot_figure_2_efficiency_tradeoff(food_data)
+    plot_figure_3_convergence(food_data)
+    plot_figure_4_retention_bars(food_data)
+    plot_figure_5_dual_dataset_curves(food_data, cifar_data)
+    print("\n[OK] Todas las 5 figuras generadas exitosamente en 'latex/figures/'.")
 
 if __name__ == "__main__":
     main()

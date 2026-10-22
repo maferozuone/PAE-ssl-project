@@ -52,7 +52,7 @@ def load_json(path):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="Mostrar resultados comparativos de CIFAR-100")
-    parser.add_argument("--all", action="store_true", help="Mostrar todas las configuraciones disponibles (90%, 80%, 60%, 40%)")
+    parser.add_argument("--all", action="store_true", help="Mostrar todas las configuraciones disponibles (90%%, 80%%, 60%%, 40%%)")
     args = parser.parse_args()
 
     print("\n" + "=" * 95)

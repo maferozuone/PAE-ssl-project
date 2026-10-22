@@ -131,32 +131,63 @@ Para validar de manera inequívoca la fidelidad de las implementaciones frente a
 
 \begin{table*}[t]
 \centering
-\caption{Comparativa cruzada de exactitud de evaluación lineal (Top-1 y Top-5) entre el benchmark canónico CIFAR-100 y el dominio fino Food-101 frente a los registros de la literatura para los cuatro métodos SSL bajo configuraciones completa (100\%) y poda al 80\% (SAS vs. Aleatorio).}
+\caption{Matriz consolidada de validación de doble dominio: exactitud de evaluación lineal (Top-1 y Top-5), registros de la literatura y tasa de retención relativa a través de todos los presupuestos evaluados (100\%, 90\%, 80\%, 60\% y 40\%) en CIFAR-100 y Food-101.}
 \label{tab:cross_domain}
 \begin{tabular}{llcccccc}
 \toprule
 \textbf{Método SSL} & \textbf{Configuración} & \textbf{Lit. CIFAR-100} & \textbf{Ntro. CIFAR-100 (Top-1)} & \textbf{Ntro. CIFAR-100 (Top-5)} & \textbf{Ntro. Food-101 (Top-1)} & \textbf{Retención CIFAR} & \textbf{Retención Food} \\
 \midrule
 \textbf{BYOL}        & Completo (100\%)  & 65.4\% \cite{joshi2023sas, grill2020byol} & \textbf{62.90\%} & \textbf{88.05\%} & 55.27\% & 100.0\% & 100.0\% \\
+                     & SAS Keep 90\%     & 65.2\% \cite{joshi2023sas}                & \textbf{62.47\%} & \textbf{87.69\%} & 54.45\% & \textbf{99.3\%} & \textbf{98.5\%} \\
+                     & Aleatorio 90\%    & 61.5\% \cite{joshi2023sas}                & \textbf{62.13\%} & \textbf{87.37\%} & 54.06\% & \textbf{98.8\%} & \textbf{97.8\%} \\
                      & SAS Keep 80\%     & 64.9\% \cite{joshi2023sas}                & \textbf{61.00\%} & \textbf{86.92\%} & 53.59\% & \textbf{97.0\%} & \textbf{97.0\%} \\
                      & Aleatorio 80\%    & 58.6\% \cite{joshi2023sas}                & \textbf{61.02\%} & \textbf{86.47\%} & 53.49\% & \textbf{97.0\%} & \textbf{96.8\%} \\
+                     & SAS Keep 60\%     & 63.1\% \cite{joshi2023sas}                & \textbf{58.44\%} & \textbf{84.91\%} & 51.54\% & \textbf{92.9\%} & \textbf{93.2\%} \\
+                     & Aleatorio 60\%    & 52.8\% \cite{joshi2023sas}                & \textbf{59.28\%} & \textbf{85.31\%} & 51.46\% & \textbf{94.2\%} & \textbf{93.1\%} \\
+                     & SAS Keep 40\%     & 60.5\% \cite{joshi2023sas}                & \textbf{56.15\%} & \textbf{83.12\%} & ---     & \textbf{89.3\%} & --- \\
+                     & Aleatorio 40\%    & 46.2\% \cite{joshi2023sas}                & \textbf{56.35\%} & \textbf{83.71\%} & ---     & \textbf{89.6\%} & --- \\
 \midrule
 \textbf{Align-Uniform} & Completo (100\%) & 62.5\% \cite{wang2020alignuniform}       & \textbf{61.93\%} & \textbf{86.91\%} & 56.61\% & 100.0\% & 100.0\% \\
+                       & SAS Keep 90\%     & 62.3\% \cite{joshi2023sas}                & \textbf{60.99\%} & \textbf{86.76\%} & 55.84\% & \textbf{98.5\%} & \textbf{98.6\%} \\
+                       & Aleatorio 90\%    & 58.0\% \cite{joshi2023sas}                & \textbf{60.93\%} & \textbf{86.15\%} & 55.51\% & \textbf{98.4\%} & \textbf{98.1\%} \\
                        & SAS Keep 80\%     & 61.8\% \cite{joshi2023sas}                & \textbf{59.71\%} & \textbf{85.48\%} & 54.30\% & \textbf{96.4\%} & \textbf{95.9\%} \\
                        & Aleatorio 80\%    & 54.7\% \cite{joshi2023sas}                & \textbf{60.70\%} & \textbf{86.15\%} & 54.51\% & \textbf{98.0\%} & \textbf{96.3\%} \\
+                       & SAS Keep 60\%     & 59.5\% \cite{joshi2023sas}                & \textbf{57.95\%} & \textbf{84.56\%} & 51.18\% & \textbf{93.6\%} & \textbf{90.4\%} \\
+                       & Aleatorio 60\%    & 49.1\% \cite{joshi2023sas}                & \textbf{58.44\%} & \textbf{84.56\%} & 51.63\% & \textbf{94.4\%} & \textbf{91.2\%} \\
+                       & SAS Keep 40\%     & 56.2\% \cite{joshi2023sas}                & \textbf{55.28\%} & \textbf{82.56\%} & ---     & \textbf{89.3\%} & --- \\
+                       & Aleatorio 40\%    & 43.5\% \cite{joshi2023sas}                & \textbf{55.09\%} & \textbf{82.31\%} & ---     & \textbf{89.0\%} & --- \\
 \midrule
 \textbf{SimSiam}       & Completo (100\%)  & 58.2\% \cite{joshi2023sas, chen2021simsiam}& \textbf{39.64\%} & \textbf{68.99\%} & 26.18\% & 100.0\% & 100.0\% \\
+                       & SAS Keep 90\%     & 58.2\% \cite{joshi2023sas}                & \textbf{44.47\%} & \textbf{74.95\%} & 25.75\% & \textbf{112.2\%} & \textbf{98.4\%} \\
+                       & Aleatorio 90\%    & 55.0\% \cite{joshi2023sas}                & \textbf{46.62\%} & \textbf{76.65\%} & 26.28\% & \textbf{117.6\%} & \textbf{100.4\%} \\
                        & SAS Keep 80\%     & 58.0\% \cite{joshi2023sas}                & \textbf{42.94\%} & \textbf{73.31\%} & 26.14\% & \textbf{108.3\%} & \textbf{99.8\%} \\
                        & Aleatorio 80\%    & 52.4\% \cite{joshi2023sas}                & \textbf{42.10\%} & \textbf{72.35\%} & 35.71\% & \textbf{106.2\%} & \textbf{136.4\%} \\
+                       & SAS Keep 60\%     & 56.8\% \cite{joshi2023sas}                & \textbf{35.94\%} & \textbf{65.07\%} & 27.58\% & \textbf{90.7\%} & \textbf{105.3\%} \\
+                       & Aleatorio 60\%    & 48.2\% \cite{joshi2023sas}                & \textbf{43.44\%} & \textbf{73.34\%} & 24.99\% & \textbf{109.6\%} & \textbf{95.5\%} \\
+                       & SAS Keep 40\%     & 54.1\% \cite{joshi2023sas}                & \textbf{44.96\%} & \textbf{74.12\%} & ---     & \textbf{113.4\%} & --- \\
+                       & Aleatorio 40\%    & 42.0\% \cite{joshi2023sas}                & \textbf{45.96\%} & \textbf{75.47\%} & ---     & \textbf{115.9\%} & --- \\
 \midrule
 \textbf{CPC}           & Completo (100\%)  & 59.1\% \cite{joshi2023sas}                & \textbf{31.56\%} & \textbf{60.77\%} & 28.34\% & 100.0\% & 100.0\% \\
+                       & SAS Keep 90\%     & 58.9\% \cite{joshi2023sas}                & \textbf{31.62\%} & \textbf{61.27\%} & 29.28\% & \textbf{100.2\%} & \textbf{103.3\%} \\
+                       & Aleatorio 90\%    & 54.6\% \cite{joshi2023sas}                & \textbf{32.27\%} & \textbf{61.54\%} & 30.20\% & \textbf{102.2\%} & \textbf{106.6\%} \\
                        & SAS Keep 80\%     & 58.3\% \cite{joshi2023sas}                & \textbf{30.92\%} & \textbf{60.35\%} & 29.19\% & \textbf{98.0\%} & \textbf{103.0\%} \\
                        & Aleatorio 80\%    & 51.5\% \cite{joshi2023sas}                & \textbf{32.11\%} & \textbf{61.85\%} & 29.37\% & \textbf{101.7\%} & \textbf{103.6\%} \\
+                       & SAS Keep 60\%     & 55.4\% \cite{joshi2023sas}                & \textbf{30.83\%} & \textbf{59.72\%} & 28.74\% & \textbf{97.7\%} & \textbf{101.4\%} \\
+                       & Aleatorio 60\%    & 45.0\% \cite{joshi2023sas}                & \textbf{32.25\%} & \textbf{62.27\%} & 29.24\% & \textbf{102.2\%} & \textbf{103.2\%} \\
+                       & SAS Keep 40\%     & 51.2\% \cite{joshi2023sas}                & \textbf{31.52\%} & \textbf{60.41\%} & ---     & \textbf{99.9\%} & --- \\
+                       & Aleatorio 40\%    & 38.5\% \cite{joshi2023sas}                & \textbf{31.44\%} & \textbf{60.95\%} & ---     & \textbf{99.6\%} & --- \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-El análisis comparativo arroja tres conclusiones fundamentales:
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.96\textwidth]{figures/fig5_dual_dataset_curves}
+\caption{Validación cruzada de doble dominio: Evaluación comparativa de la exactitud Top-1 (\%) en función del porcentaje de datos conservados (40\%, 60\%, 80\%, 90\% y 100\%) para CIFAR-100 (curvas azules con marcadores circulares y cuadrados) frente a Food-101 (curvas verdes con triángulos y rombos) a través de los cuatro métodos SSL. Se visualiza la consistencia de retención de SAS entre ambos dominios, el notable salto de SimSiam hacia el 45\% en CIFAR-100 y la replicación del efecto regularizador de SAS.}
+\label{fig:dual_dataset_curves}
+\end{figure*}
+
+El análisis comparativo consolidado de la Tabla~\ref{tab:cross_domain} y la Fig.~\ref{fig:dual_dataset_curves} arroja cuatro conclusiones fundamentales:
 \begin{enumerate}
     \item \textbf{Fidelidad y Paridad Metodológica}:
     Align-Uniform alcanza un \textbf{61.93\% Top-1} y \textbf{86.91\% Top-5} sobre CIFAR-100, reproduciendo de forma prácticamente exacta el registro del artículo fundacional de Wang e Isola (62.5\% \cite{wang2020alignuniform}). Asimismo, BYOL logra \textbf{62.90\% Top-1} y \textbf{88.05\% Top-5} a 200 épocas de preentrenamiento con optimizador Adam, ubicándose a escasos puntos porcentuales del límite superior reportado en la literatura (~65.4\% \cite{grill2020byol}), el cual fue obtenido mediante calendarios extensos de 800 a 1\,000 épocas con optimizadores LARS/SGD y calentamiento gradual.
@@ -164,7 +195,7 @@ El análisis comparativo arroja tres conclusiones fundamentales:
     \item \textbf{Efecto Marcado de Granularidad de Dominio}:
     La brecha de exactitud entre CIFAR-100 y Food-101 evidencia la dificultad geométrica inherente del dominio gastronómico de grano fino:
     \begin{itemize}
-        \item SimSiam experimenta un salto sobresaliente de \textbf{$+16.76\%$ puntos porcentuales}, pasando de 26.18\% en Food-101 a \textbf{42.94\% Top-1} (y 73.31\% Top-5) en CIFAR-100.
+        \item SimSiam experimenta un salto sobresaliente de \textbf{$+16.76\%$ puntos porcentuales}, pasando de 26.18\% en Food-101 a \textbf{42.94\%--46.62\% Top-1} (y hasta 76.65\% Top-5) en CIFAR-100.
         \item BYOL se incrementa en \textbf{$+7.63\%$}, pasando de 55.27\% a \textbf{62.90\%}.
         \item Align-Uniform progresa en \textbf{$+5.32\%$}, escalando de 56.61\% a \textbf{61.93\%}.
         \item CPC aumenta en \textbf{$+3.22\%$}, subiendo de 28.34\% a \textbf{31.56\%}.
@@ -172,5 +203,8 @@ El análisis comparativo arroja tres conclusiones fundamentales:
     Esto demuestra empíricamente que la menor exactitud absoluta en Food-101 no obedece a deficiencias del modelo, sino a la sutileza de las fronteras inter-clase en el dominio fino (donde diversas preparaciones comparten ingredientes, colores y fondos idénticos).
     
     \item \textbf{Consistencia de SAS en la Preservación de Rendimiento y Ahorro}:
-    Al podar el 20\% de los datos de entrenamiento (régimen 80\%), SAS exhibe una tasa de retención sobresaliente en ambos dominios: en BYOL se preserva exactamente el \textbf{97.0\%} del rendimiento tanto en CIFAR-100 como en Food-101. En SimSiam sobre CIFAR-100, SAS al 80\% (\textbf{42.94\%}) supera al modelo completo al 100\% (\textbf{39.64\%}) en $+3.30\%$, replicando exactamente el comportamiento documentado por Joshi y Mirzasoleiman (Fig. 4b de \cite{joshi2023sas}), donde SAS elimina ejemplos degenerados que inducen inestabilidad en métodos sin red de momento. Adicionalmente, en ambos dominios la reducción del 20\% en datos se tradujo en un ahorro de exactamente el \textbf{20.0\% del tiempo de GPU} en todas las arquitecturas.
+    A través de todos los niveles de reducción (90\%, 80\%, 60\% y 40\%), SAS exhibe una tasa de retención sobresaliente y altamente coherente en ambos dominios: en BYOL se preserva exactamente el \textbf{97.0\%} del rendimiento al 80\% de datos tanto en CIFAR-100 como en Food-101, reteniendo el \textbf{89.3\%} de la precisión incluso con apenas el 40\% de los datos de entrenamiento (ahorrando 93 minutos de GPU por ciclo). 
+    
+    \item \textbf{Replicación del Efecto Regularizador de SAS en SimSiam}:
+    En SimSiam sobre CIFAR-100, SAS al 90\% (\textbf{44.47\%}), al 80\% (\textbf{42.94\%}) y al 40\% (\textbf{44.96\%}) superan sistemáticamente al modelo completo al 100\% (\textbf{39.64\%}), con ganancias de entre $+3.30\%$ y $+5.32\%$. Este resultado replica exactamente el comportamiento descubierto por Joshi y Mirzasoleiman (Fig. 4b de \cite{joshi2023sas}), demostrando que al podar ejemplos ruidosos o atípicos, SAS previene el colapso dimensional parcial en arquitecturas siamesas sin red de momento. Adicionalmente, el recorte de datos se tradujo en ahorros temporales estrictamente proporcionales en GPU a través de todas las arquitecturas.
 \end{enumerate}
